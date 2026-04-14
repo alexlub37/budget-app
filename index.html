@@ -89,6 +89,15 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 </div></div>
 </div>
 
+
+<div id="view_fixes" class="screen">
+<h1>Vue fixes</h1>
+<div class="card">
+<div class="row"><div class="desc">Total fixes mensuels</div><div id="viewFixedTotal" class="amount bad">0 €</div></div>
+<div id="viewFixedList"></div>
+</div>
+</div>
+
 <div id="summary" class="screen">
 <h1>Résumé</h1>
 <div class="card"><h2>Par catégorie</h2><div id="categorySummary"></div></div>
@@ -106,6 +115,7 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 <div class="tab active" data-tab="home" onclick="showTab('home')">Accueil</div>
 <div class="tab" data-tab="add" onclick="showTab('add')">Ajouter</div>
 <div class="tab" data-tab="fixed" onclick="showTab('fixed')">Fixes</div>
+<div class="tab" data-tab="view_fixes" onclick="showTab('view_fixes')">Vue fixes</div>
 <div class="tab" data-tab="summary" onclick="showTab('summary')">Résumé</div>
 </div>
 
@@ -172,6 +182,19 @@ saveState();
 alert("Frais fixe ajouté.");
 }
 function seedCurrentMonth(){const mk=nowMonthKey();if(state.entries.some(e=>e.seeded&&monthKey(e.date)===mk)){alert("Les frais fixes de ce mois sont déjà chargés.");return}const date=mk+"-01";state.fixedTemplates.forEach(item=>{if(Number(item.amount)>0){state.entries.unshift({id:Date.now()+Math.random(),date,description:item.description,amount:-Math.abs(Number(item.amount)),category:item.category,seeded:true})}});saveState();alert("Frais fixes du mois ajoutés.")}
+function renderViewFixes(){
+const box=document.getElementById("viewFixedList");
+const totalEl=document.getElementById("viewFixedTotal");
+if(!box||!totalEl)return;
+totalEl.textContent=euro(fixedTotal());
+box.innerHTML="";
+state.fixedTemplates.forEach(item=>{
+const row=document.createElement("div");
+row.className="row";
+row.innerHTML=`<div><div class="desc">${escapeHtml(item.description)}</div><div class="sub">${escapeHtml(item.category)}</div></div><div class="amount bad">${euro(Number(item.amount)||0)}</div>`;
+box.appendChild(row);
+});
+}
 
 function renderSummary(){const s=summary();const catBox=document.getElementById("categorySummary");catBox.innerHTML="";CATEGORIES.forEach(cat=>{const raw=s.byCat[cat]||0;if(raw===0)return;const row=document.createElement("div");row.className="row";row.innerHTML=`<div class="desc">${cat}</div><div class="amount ${raw<0?'bad':'good'}">${euro(raw)}</div>`;catBox.appendChild(row)});const box=document.getElementById("entriesList");box.innerHTML="";if(s.entries.length===0){box.innerHTML='<div class="small">Aucune opération ce mois.</div>'}else{s.entries.forEach((e,idx)=>{const row=document.createElement("div");row.className="editbox";row.innerHTML=`<div class="grid compact"><div><div class="label">Date</div><input type="date" value="${e.date}" onchange="updateEntry(${e.id}, 'date', this.value)"></div><div><div class="label">Description</div><input value="${escapeHtml(e.description)}" onchange="updateEntry(${e.id}, 'description', this.value)"></div><div><div class="label">Montant (€)</div><input type="number" step="0.01" value="${Math.abs(e.amount)}" onchange="updateEntryAmount(${e.id}, this.value)"></div><div><div class="label">Catégorie</div><select id="entryCat${idx}" onchange="updateEntry(${e.id}, 'category', this.value)"></select></div><div class="inline" style="justify-content:space-between"><div class="small">${e.seeded?'Frais fixe chargé':'Opération saisie'}</div><button class="danger" style="width:auto;padding:10px 12px" onclick="deleteEntry(${e.id})">Supprimer</button></div></div>`;box.appendChild(row);row.querySelector(`#entryCat${idx}`).innerHTML=CATEGORIES.map(c=>`<option ${c===e.category?'selected':''}>${c}</option>`).join("")})}document.getElementById("salarySetting").value=state.settings.salary;document.getElementById("budgetSetting").value=state.settings.variableBudget}
 function updateEntry(id,field,value){const e=state.entries.find(x=>x.id===id);if(!e)return;e[field]=value;saveState()}
@@ -179,7 +202,7 @@ function updateEntryAmount(id,value){const e=state.entries.find(x=>x.id===id);if
 function deleteEntry(id){if(!confirm("Supprimer cette opération ?"))return;state.entries=state.entries.filter(x=>x.id!==id);saveState()}
 function saveSettings(){state.settings.salary=parseFloat(document.getElementById("salarySetting").value||0);state.settings.variableBudget=parseFloat(document.getElementById("budgetSetting").value||0);saveState();alert("Réglages enregistrés.")}
 function resetAll(){if(!confirm("Tout effacer ?"))return;localStorage.removeItem(KEY);state=loadState();renderAll()}
-function renderAll(){fillCategorySelect("quickCategory","Courses");fillCategorySelect("categoryInput","Divers");fillCategorySelect("newFixedCategory","Fixes");document.getElementById("dateInput").value=today();renderHome();renderFixed();renderSummary()}
+function renderAll(){fillCategorySelect("quickCategory","Courses");fillCategorySelect("categoryInput","Divers");fillCategorySelect("newFixedCategory","Fixes");document.getElementById("dateInput").value=today();renderHome();renderFixed();renderViewFixes();renderSummary()}
 renderAll();
 </script>
 </body>
