@@ -72,10 +72,20 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 <div class="card">
 <div class="small">Base actuelle : 500 loyer/crédit, 100 EDF, 20 tel Alex, 20 tel Noam, 28 assurance prêt, 9 frais banque, 23 ChatGPT, 41 voiture, 45 maison, 20 Deezer, 1 appel, 7 Amazon, 53 internet, 37 mutuelle, 87 impôts fonciers.</div>
 <div class="row"><div class="desc">Total fixes mensuels</div><div id="fixedTotalTop" class="amount bad">0 €</div></div>
+
+<div class="editbox">
+<div class="desc" style="margin-bottom:8px">Ajouter un nouveau fixe</div>
+<div class="grid compact">
+<div><div class="label">Libellé</div><input id="newFixedDesc" placeholder="Ex : Netflix"></div>
+<div><div class="label">Montant (€)</div><input id="newFixedAmount" type="number" step="0.01" placeholder="Ex : 15"></div>
+<div><div class="label">Catégorie</div><select id="newFixedCategory"></select></div>
+<button class="primary" onclick="saveNewFixed()">Enregistrer le fixe</button>
+</div>
+</div>
+
 <div id="fixedList"></div>
 <div style="margin-top:10px" class="grid">
 <button class="success" onclick="seedCurrentMonth()">Charger les fixes de ce mois</button>
-<button class="secondary" onclick="addFixedTemplate()">Ajouter un fixe</button>
 </div></div>
 </div>
 
@@ -149,6 +159,18 @@ function renderFixed(){document.getElementById("fixedTotalTop").textContent=euro
 function updateFixed(index,field,value){if(field==="amount")value=parseFloat(value||0);state.fixedTemplates[index][field]=value;saveState()}
 function deleteFixed(index){if(!confirm("Supprimer ce frais fixe ?"))return;state.fixedTemplates.splice(index,1);saveState()}
 function addFixedTemplate(){state.fixedTemplates.push({description:"Nouveau frais fixe",amount:0,category:"Fixes"});saveState()}
+function saveNewFixed(){
+const desc=document.getElementById("newFixedDesc").value.trim();
+const amount=parseFloat(document.getElementById("newFixedAmount").value);
+const category=document.getElementById("newFixedCategory").value;
+if(!desc||isNaN(amount)||amount<=0){alert("Renseigne un libellé et un montant valide.");return;}
+state.fixedTemplates.push({description:desc,amount:amount,category:category});
+document.getElementById("newFixedDesc").value="";
+document.getElementById("newFixedAmount").value="";
+document.getElementById("newFixedCategory").value="Fixes";
+saveState();
+alert("Frais fixe ajouté.");
+}
 function seedCurrentMonth(){const mk=nowMonthKey();if(state.entries.some(e=>e.seeded&&monthKey(e.date)===mk)){alert("Les frais fixes de ce mois sont déjà chargés.");return}const date=mk+"-01";state.fixedTemplates.forEach(item=>{if(Number(item.amount)>0){state.entries.unshift({id:Date.now()+Math.random(),date,description:item.description,amount:-Math.abs(Number(item.amount)),category:item.category,seeded:true})}});saveState();alert("Frais fixes du mois ajoutés.")}
 
 function renderSummary(){const s=summary();const catBox=document.getElementById("categorySummary");catBox.innerHTML="";CATEGORIES.forEach(cat=>{const raw=s.byCat[cat]||0;if(raw===0)return;const row=document.createElement("div");row.className="row";row.innerHTML=`<div class="desc">${cat}</div><div class="amount ${raw<0?'bad':'good'}">${euro(raw)}</div>`;catBox.appendChild(row)});const box=document.getElementById("entriesList");box.innerHTML="";if(s.entries.length===0){box.innerHTML='<div class="small">Aucune opération ce mois.</div>'}else{s.entries.forEach((e,idx)=>{const row=document.createElement("div");row.className="editbox";row.innerHTML=`<div class="grid compact"><div><div class="label">Date</div><input type="date" value="${e.date}" onchange="updateEntry(${e.id}, 'date', this.value)"></div><div><div class="label">Description</div><input value="${escapeHtml(e.description)}" onchange="updateEntry(${e.id}, 'description', this.value)"></div><div><div class="label">Montant (€)</div><input type="number" step="0.01" value="${Math.abs(e.amount)}" onchange="updateEntryAmount(${e.id}, this.value)"></div><div><div class="label">Catégorie</div><select id="entryCat${idx}" onchange="updateEntry(${e.id}, 'category', this.value)"></select></div><div class="inline" style="justify-content:space-between"><div class="small">${e.seeded?'Frais fixe chargé':'Opération saisie'}</div><button class="danger" style="width:auto;padding:10px 12px" onclick="deleteEntry(${e.id})">Supprimer</button></div></div>`;box.appendChild(row);row.querySelector(`#entryCat${idx}`).innerHTML=CATEGORIES.map(c=>`<option ${c===e.category?'selected':''}>${c}</option>`).join("")})}document.getElementById("salarySetting").value=state.settings.salary;document.getElementById("budgetSetting").value=state.settings.variableBudget}
@@ -157,9 +179,8 @@ function updateEntryAmount(id,value){const e=state.entries.find(x=>x.id===id);if
 function deleteEntry(id){if(!confirm("Supprimer cette opération ?"))return;state.entries=state.entries.filter(x=>x.id!==id);saveState()}
 function saveSettings(){state.settings.salary=parseFloat(document.getElementById("salarySetting").value||0);state.settings.variableBudget=parseFloat(document.getElementById("budgetSetting").value||0);saveState();alert("Réglages enregistrés.")}
 function resetAll(){if(!confirm("Tout effacer ?"))return;localStorage.removeItem(KEY);state=loadState();renderAll()}
-function renderAll(){fillCategorySelect("quickCategory","Courses");fillCategorySelect("categoryInput","Divers");document.getElementById("dateInput").value=today();renderHome();renderFixed();renderSummary()}
+function renderAll(){fillCategorySelect("quickCategory","Courses");fillCategorySelect("categoryInput","Divers");fillCategorySelect("newFixedCategory","Fixes");document.getElementById("dateInput").value=today();renderHome();renderFixed();renderSummary()}
 renderAll();
 </script>
 </body>
 </html>
-
