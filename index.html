@@ -26,11 +26,27 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 <h1>Budget Alexandre</h1>
 <div class="card">
 <div class="inline" style="justify-content:space-between"><div><div class="small">Mois en cours</div><div id="monthLabel" class="desc"></div></div><span class="pill">Usage quotidien</span></div>
+
+<div class="editbox">
+<div class="desc" style="margin-bottom:8px">Répartition du salaire</div>
+<div class="grid compact">
+<div><div class="label">Salaire réel (€)</div><input id="salaryHomeInput" type="number" step="0.01" onchange="savePercentSettings()"></div>
+<div><div class="label">% Épargne</div><input id="savePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
+<div><div class="label">% Sécurité</div><input id="safePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
+<div><div class="label">% Budget dispo</div><input id="lifePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
+</div>
+<div class="small" id="percentCheck" style="margin-top:8px"></div>
+</div>
+
 <div class="grid g2" style="margin-top:12px">
-<div class="kpi"><div class="label">Salaire</div><div id="salaryKpi" class="value good">0 €</div></div>
+<div class="kpi"><div class="label">Salaire réel</div><div id="salaryKpi" class="value good">0 €</div></div>
+<div class="kpi"><div class="label">Épargne</div><div id="saveKpi" class="value">0 €</div></div>
+<div class="kpi"><div class="label">Sécurité</div><div id="safeKpi" class="value">0 €</div></div>
+<div class="kpi"><div class="label">Budget dispo</div><div id="budgetDispoKpi" class="value good">0 €</div></div>
 <div class="kpi"><div class="label">Fixes mensuels</div><div id="fixedKpi" class="value bad">0 €</div></div>
 <div class="kpi"><div class="label">Variables du mois</div><div id="variableKpi" class="value warn">0 €</div></div>
 <div class="kpi"><div class="label">Reste à vivre</div><div id="remainingKpi" class="value">0 €</div></div>
+<div class="kpi"><div class="label">% fixes du budget dispo</div><div id="fixedPctKpi" class="value">0 %</div></div>
 </div></div>
 
 <div class="card">
@@ -104,7 +120,7 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 <div class="card"><div class="inline" style="justify-content:space-between"><h2>Opérations du mois</h2><div class="small">Modifier ou supprimer</div></div><div id="entriesList"></div></div>
 <div class="card"><h2>Réglages</h2><div class="grid">
 <div><div class="label">Salaire mensuel (€)</div><input id="salarySetting" type="number" step="0.01"></div>
-<div><div class="label">Budget variables max (€)</div><input id="budgetSetting" type="number" step="0.01"></div>
+<div><div class="label">Budget variables max (€)</div><input id="budgetSetting" type="number" step="0.01"></div><div class="small">Le salaire et les pourcentages se règlent sur l’accueil.</div>
 <button class="primary" onclick="saveSettings()">Sauvegarder</button>
 <button class="danger" onclick="resetAll()">Réinitialiser</button>
 </div></div>
@@ -123,7 +139,7 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 const KEY="budget_alexandre_v3";
 const CATEGORIES=["Fixes","Courses","Transport","Abonnements","Virements","Plaisir","Santé","Divers","Revenus"];
 const defaultState={
-settings:{salary:2200,variableBudget:1200},
+settings:{salary:2200,variableBudget:1200,savePct:15,safePct:10,lifePct:75},
 fixedTemplates:[
 {description:"Loyer / crédit",amount:500,category:"Fixes"},
 {description:"EDF",amount:100,category:"Fixes"},
@@ -157,14 +173,26 @@ function autoCategory(desc){const d=(desc||"").toUpperCase();if(d.includes("CARR
 function suggestCategory(){const desc=document.getElementById("descInput").value;const type=document.getElementById("typeInput").value;document.getElementById("categoryInput").value=type==="income"?"Revenus":autoCategory(desc)}
 function fixedTotal(){return state.fixedTemplates.reduce((s,x)=>s+Math.abs(Number(x.amount)||0),0)}
 function entriesThisMonth(){const mk=nowMonthKey();return state.entries.filter(e=>monthKey(e.date)===mk)}
-function summary(){const entries=entriesThisMonth();const manualIncome=entries.filter(e=>e.amount>0).reduce((s,e)=>s+e.amount,0);const variableExpenses=Math.abs(entries.filter(e=>e.amount<0&&!e.seeded).reduce((s,e)=>s+e.amount,0));const fixedLoaded=Math.abs(entries.filter(e=>e.amount<0&&e.seeded).reduce((s,e)=>s+e.amount,0));const salary=Number(state.settings.salary)||0;const totalIncome=salary+manualIncome;const totalExpenses=variableExpenses+fixedLoaded;const remaining=totalIncome-totalExpenses;const byCat={};entries.forEach(e=>byCat[e.category]=(byCat[e.category]||0)+e.amount);return{entries,salary,totalIncome,variableExpenses,fixedLoaded,totalExpenses,remaining,byCat}}
+function summary(){const entries=entriesThisMonth();const manualIncome=entries.filter(e=>e.amount>0).reduce((s,e)=>s+e.amount,0);const variableExpenses=Math.abs(entries.filter(e=>e.amount<0&&!e.seeded).reduce((s,e)=>s+e.amount,0));const fixedLoaded=Math.abs(entries.filter(e=>e.amount<0&&e.seeded).reduce((s,e)=>s+e.amount,0));const salary=Number(state.settings.salary)||0;const savePct=Number(state.settings.savePct)||0;const safePct=Number(state.settings.safePct)||0;const lifePct=Number(state.settings.lifePct)||0;const saveAmt=salary*savePct/100;const safeAmt=salary*safePct/100;const budgetDispo=salary-saveAmt-safeAmt;const totalIncome=salary+manualIncome;const totalExpenses=variableExpenses+fixedLoaded;const remaining=budgetDispo-totalExpenses+fixedLoaded;const byCat={};entries.forEach(e=>byCat[e.category]=(byCat[e.category]||0)+e.amount);return{entries,salary,totalIncome,variableExpenses,fixedLoaded,totalExpenses,remaining,byCat,savePct,safePct,lifePct,saveAmt,safeAmt,budgetDispo}}
 function showTab(name){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(name).classList.add("active");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelector(`.tab[data-tab="${name}"]`).classList.add("active")}
 
 function openQuick(category,description,amount){document.getElementById("quickEditor").style.display="block";document.getElementById("quickDesc").value=description;document.getElementById("quickAmount").value=amount;document.getElementById("quickCategory").value=category}
 function closeQuick(){document.getElementById("quickEditor").style.display="none"}
 function saveQuick(){const description=document.getElementById("quickDesc").value.trim();const amount=parseFloat(document.getElementById("quickAmount").value);const category=document.getElementById("quickCategory").value;if(!description||isNaN(amount)||amount<=0){alert("Montant ou description invalide.");return}state.entries.unshift({id:Date.now(),date:today(),description,amount:-Math.abs(amount),category,seeded:false});saveState();closeQuick()}
 function addEntry(){const date=document.getElementById("dateInput").value;const description=document.getElementById("descInput").value.trim();const amountVal=parseFloat(document.getElementById("amountInput").value);const type=document.getElementById("typeInput").value;const category=document.getElementById("categoryInput").value;if(!date||!description||isNaN(amountVal)||amountVal<=0){alert("Complète la date, la description et le montant.");return}state.entries.unshift({id:Date.now(),date,description,amount:type==="expense"?-Math.abs(amountVal):Math.abs(amountVal),category,seeded:false});document.getElementById("descInput").value="";document.getElementById("amountInput").value="";document.getElementById("typeInput").value="expense";document.getElementById("categoryInput").value="Divers";saveState();showTab("home")}
-function renderHome(){const s=summary();document.getElementById("monthLabel").textContent=nowLabel();document.getElementById("salaryKpi").textContent=euro(s.salary);document.getElementById("fixedKpi").textContent=euro(s.fixedLoaded||fixedTotal());document.getElementById("variableKpi").textContent=euro(s.variableExpenses);const rk=document.getElementById("remainingKpi");rk.textContent=euro(s.remaining);rk.className="value "+(s.remaining>=300?"good":s.remaining>=0?"warn":"bad");const virements=Math.abs(s.byCat["Virements"]||0);const courses=Math.abs(s.byCat["Courses"]||0);let txt="✅ Situation correcte.";if(s.variableExpenses>(Number(state.settings.variableBudget)||0))txt="⚠️ Tu dépasses ton budget variable du mois.";else if(s.remaining<0)txt="⚠️ Tu es en négatif sur le mois.";else if(virements>300)txt="⚠️ Virements élevés ce mois.";else if(courses>350)txt="⚠️ Courses au-dessus de ta cible.";else if(s.remaining<200)txt="⚠️ Marge faible ce mois.";document.getElementById("alertText").textContent=txt}
+function renderHome(){const s=summary();document.getElementById("monthLabel").textContent=nowLabel();document.getElementById("salaryKpi").textContent=euro(s.salary);document.getElementById("saveKpi").textContent=euro(s.saveAmt);document.getElementById("safeKpi").textContent=euro(s.safeAmt);document.getElementById("budgetDispoKpi").textContent=euro(s.budgetDispo);document.getElementById("fixedKpi").textContent=euro(s.fixedLoaded||fixedTotal());document.getElementById("variableKpi").textContent=euro(s.variableExpenses);document.getElementById("fixedPctKpi").textContent=((fixedTotal()/(s.budgetDispo||1))*100).toFixed(0)+' %';const rk=document.getElementById("remainingKpi");rk.textContent=euro(s.remaining);rk.className="value "+(s.remaining>=300?"good":s.remaining>=0?"warn":"bad");document.getElementById("salaryHomeInput").value=s.salary;document.getElementById("savePctInput").value=s.savePct;document.getElementById("safePctInput").value=s.safePct;document.getElementById("lifePctInput").value=s.lifePct;const totalPct=s.savePct+s.safePct+s.lifePct;const pc=document.getElementById("percentCheck");pc.textContent='Total pourcentages : '+totalPct+'%';if(totalPct!==100){pc.textContent+=' — ajuste pour arriver à 100%';}const virements=Math.abs(s.byCat["Virements"]||0);const courses=Math.abs(s.byCat["Courses"]||0);let txt="✅ Situation correcte.";if(s.variableExpenses>(Number(state.settings.variableBudget)||0))txt="⚠️ Tu dépasses ton budget variable du mois.";else if(s.remaining<0)txt="⚠️ Tu es en négatif sur le mois.";else if(virements>300)txt="⚠️ Virements élevés ce mois.";else if(courses>350)txt="⚠️ Courses au-dessus de ta cible.";else if(s.remaining<200)txt="⚠️ Marge faible ce mois.";document.getElementById("alertText").textContent=txt}
+function savePercentSettings(){
+const salary=parseFloat(document.getElementById("salaryHomeInput").value||0);
+const savePct=parseFloat(document.getElementById("savePctInput").value||0);
+const safePct=parseFloat(document.getElementById("safePctInput").value||0);
+const lifePct=parseFloat(document.getElementById("lifePctInput").value||0);
+state.settings.salary=salary;
+state.settings.savePct=savePct;
+state.settings.safePct=safePct;
+state.settings.lifePct=lifePct;
+state.settings.variableBudget=(salary*lifePct/100)-fixedTotal();
+saveState();
+}
 function renderFixed(){document.getElementById("fixedTotalTop").textContent=euro(fixedTotal());const box=document.getElementById("fixedList");box.innerHTML="";state.fixedTemplates.forEach((item,idx)=>{const div=document.createElement("div");div.className="editbox";div.innerHTML=`<div class="grid compact"><div><div class="label">Libellé</div><input value="${escapeHtml(item.description)}" onchange="updateFixed(${idx}, 'description', this.value)"></div><div><div class="label">Montant (€)</div><input type="number" step="0.01" value="${item.amount}" onchange="updateFixed(${idx}, 'amount', this.value)"></div><div><div class="label">Catégorie</div><select id="fixedCat${idx}" onchange="updateFixed(${idx}, 'category', this.value)"></select></div><button class="danger" onclick="deleteFixed(${idx})">Supprimer</button></div>`;box.appendChild(div);div.querySelector(`#fixedCat${idx}`).innerHTML=CATEGORIES.map(c=>`<option ${c===item.category?'selected':''}>${c}</option>`).join("")})}
 function updateFixed(index,field,value){if(field==="amount")value=parseFloat(value||0);state.fixedTemplates[index][field]=value;saveState()}
 function deleteFixed(index){if(!confirm("Supprimer ce frais fixe ?"))return;state.fixedTemplates.splice(index,1);saveState()}
