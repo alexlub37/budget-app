@@ -2,216 +2,229 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budget Alexandre V4.6</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Budget Alexandre V4.5</title>
 <style>
-body{font-family:Arial;margin:0;background:#f6f7fb}
-.app{padding:15px}
-h1{margin-bottom:10px}
-.card{background:white;border-radius:12px;padding:15px;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.big{font-size:20px;font-weight:bold}
-.green{color:#2e7d32}
-.red{color:#c62828}
-.blue{color:#1565c0}
-button{width:100%;padding:10px;border:none;border-radius:10px;background:#2f6df6;color:white;font-weight:bold;margin-top:5px}
-input,select{width:100%;padding:10px;margin-top:5px;border-radius:8px;border:1px solid #ccc}
-
-.quick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
-
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:white;border-top:1px solid #ccc}
-.nav div{flex:1;text-align:center;padding:10px;cursor:pointer}
+:root{--bg:#f6f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue2:#dbeafe;--green:#166534;--green2:#dcfce7;--red:#b91c1c;--red2:#fee2e2;--amber:#b45309}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:820px;margin:0 auto;padding:14px 14px 100px}.screen{display:none}.screen.active{display:block}
+.card{background:var(--card);border-radius:18px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.05);margin-bottom:12px}
+h1{font-size:24px;margin:6px 0 12px}h2{font-size:18px;margin:0 0 10px}.small{font-size:12px;color:var(--muted)}.label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.grid{display:grid;gap:10px}.g2{grid-template-columns:1fr 1fr}.kpi{border:1px solid var(--line);border-radius:16px;padding:12px}.value{font-size:24px;font-weight:800}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--amber)}
+input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);font-size:16px;background:#fff}button{font-weight:700}.primary{background:var(--blue);color:#fff;border:none}.secondary{background:var(--blue2);color:#1e40af;border:none}.success{background:var(--green2);color:var(--green);border:none}.danger{background:var(--red2);color:var(--red);border:none}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:none}
+.desc{font-weight:700}.sub{font-size:12px;color:var(--muted);margin-top:4px}.amount{font-weight:800}.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;max-width:820px;margin:0 auto;background:#fff;border-top:1px solid var(--line)}
+.tab{flex:1;padding:12px 8px;text-align:center;font-size:13px;color:var(--muted);cursor:pointer}.tab.active{color:var(--blue);font-weight:800}.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--blue2);color:#1e40af;font-size:12px}
+.inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.compact input,.compact select{padding:10px;font-size:15px}.topnote{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:14px;padding:10px 12px;font-size:13px;margin-bottom:12px}.editbox{border:1px dashed var(--line);border-radius:14px;padding:10px;margin-top:8px}
 </style>
 </head>
-
 <body>
+<div class="app">
+<div class="topnote">V4.5 simplifiée : vrais frais fixes, ajout rapide, modification et suppression des opérations.</div>
 
-<div class="app" id="app"></div>
+<div id="home" class="screen active">
+<h1>Budget Alexandre</h1>
+<div class="card">
+<div class="inline" style="justify-content:space-between"><div><div class="small">Mois en cours</div><div id="monthLabel" class="desc"></div></div><span class="pill">Usage quotidien</span></div>
 
-<div class="nav">
-<div onclick="page='accueil';render()">Accueil</div>
-<div onclick="page='ajouter';render()">Ajouter</div>
-<div onclick="page='fixes';render()">Fixes</div>
-<div onclick="page='reglages';render()">Réglages</div>
+
+<div class="grid g2" style="margin-top:12px">
+<div class="kpi"><div class="label">Salaire réel</div><div id="salaryKpi" class="value good">0 €</div></div>
+<div class="kpi"><div class="label">Épargne</div><div id="saveKpi" class="value">0 €</div></div>
+<div class="kpi"><div class="label">Sécurité</div><div id="safeKpi" class="value">0 €</div></div>
+<div class="kpi"><div class="label">Budget dispo</div><div id="budgetDispoKpi" class="value good">0 €</div></div>
+<div class="kpi"><div class="label">Fixes mensuels</div><div id="fixedKpi" class="value bad">0 €</div></div>
+<div class="kpi"><div class="label">Variables du mois</div><div id="variableKpi" class="value warn">0 €</div></div>
+<div class="kpi"><div class="label">Reste réel après fixes</div><div id="realRemainingKpi" class="value">0 €</div></div>
+</div></div>
+
+<div class="card">
+<h2>Ajout rapide</h2><div class="small" style="margin-bottom:10px">Tu peux changer le montant avant d’enregistrer.</div>
+<div class="quick-grid">
+<button class="secondary" onclick="openQuick('Courses','Courses',20)">Courses</button>
+<button class="secondary" onclick="openQuick('Plaisir','Boulangerie',5)">Boulangerie</button>
+<button class="secondary" onclick="openQuick('Plaisir','Café / snack',5)">Café / snack</button>
+<button class="secondary" onclick="openQuick('Virements','Virement',20)">Virement</button>
+<button class="secondary" onclick="openQuick('Transport','Carburant',30)">Carburant</button>
+<button class="secondary" onclick="openQuick('Santé','Santé',20)">Santé</button>
+</div>
+<div id="quickEditor" class="editbox" style="display:none">
+<div class="grid compact">
+<div><div class="label">Description</div><input id="quickDesc"></div>
+<div><div class="label">Montant (€)</div><input id="quickAmount" type="number" step="0.01"></div>
+<div><div class="label">Catégorie</div><select id="quickCategory"></select></div>
+<div class="inline"><button class="primary" onclick="saveQuick()">Enregistrer</button><button class="danger" onclick="closeQuick()" style="width:auto;padding:12px 16px">Annuler</button></div>
+</div></div>
+<div style="margin-top:10px"><button class="primary" onclick="showTab('add')">Ajouter une opération complète</button></div>
+</div>
+<div class="card"><h2>Alerte du mois</h2><div id="alertText" class="small"></div></div>
+</div>
+
+<div id="add" class="screen">
+<h1>Ajouter une opération</h1>
+<div class="card"><div class="grid">
+<div><div class="label">Date</div><input id="dateInput" type="date"></div>
+<div><div class="label">Description</div><input id="descInput" type="text" oninput="suggestCategory()" placeholder="Ex : Carrefour Market"></div>
+<div><div class="label">Montant (€)</div><input id="amountInput" type="number" step="0.01"></div>
+<div><div class="label">Type</div><select id="typeInput"><option value="expense">Dépense</option><option value="income">Revenu</option></select></div>
+<div><div class="label">Catégorie</div><select id="categoryInput"></select></div>
+<button class="primary" onclick="addEntry()">Enregistrer</button>
+</div></div>
+</div>
+
+<div id="fixed" class="screen">
+<h1>Frais fixes</h1>
+<div class="card">
+<div class="small">Base actuelle : 500 loyer/crédit, 100 EDF, 20 tel Alex, 20 tel Noam, 28 assurance prêt, 9 frais banque, 23 ChatGPT, 41 voiture, 45 maison, 20 Deezer, 1 appel, 7 Amazon, 53 internet, 37 mutuelle, 87 impôts fonciers.</div>
+<div class="row"><div class="desc">Total fixes mensuels</div><div id="fixedTotalTop" class="amount bad">0 €</div></div>
+
+<div class="editbox">
+<div class="desc" style="margin-bottom:8px">Ajouter un nouveau fixe</div>
+<div class="grid compact">
+<div><div class="label">Libellé</div><input id="newFixedDesc" placeholder="Ex : Netflix"></div>
+<div><div class="label">Montant (€)</div><input id="newFixedAmount" type="number" step="0.01" placeholder="Ex : 15"></div>
+<div><div class="label">Catégorie</div><select id="newFixedCategory"></select></div>
+<button class="primary" onclick="saveNewFixed()">Enregistrer le fixe</button>
+</div>
+</div>
+
+<div id="fixedList"></div>
+<div style="margin-top:10px" class="grid">
+<button class="success" onclick="seedCurrentMonth()">Charger les fixes de ce mois</button>
+</div></div>
+</div>
+
+
+<div id="view_fixes" class="screen">
+<h1>Vue fixes</h1>
+<div class="card">
+<div class="row"><div class="desc">Total fixes mensuels</div><div id="viewFixedTotal" class="amount bad">0 €</div></div>
+<div id="viewFixedList"></div>
+</div>
+</div>
+
+<div id="summary" class="screen">
+<h1>Résumé</h1>
+<div class="card"><h2>Répartition du salaire</h2><div class="grid compact">
+<div><div class="label">Salaire réel (€)</div><input id="salaryHomeInput" type="number" step="0.01" onchange="savePercentSettings()"></div>
+<div><div class="label">% Épargne</div><input id="savePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
+<div><div class="label">% Sécurité</div><input id="safePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
+<div><div class="label">% Budget quotidien</div><input id="lifePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
+</div><div class="small" id="percentCheck" style="margin-top:8px"></div></div>
+<div class="card"><h2>Par catégorie</h2><div id="categorySummary"></div></div>
+<div class="card"><div class="inline" style="justify-content:space-between"><h2>Opérations du mois</h2><div class="small">Modifier ou supprimer</div></div><div id="entriesList"></div></div>
+<div class="card"><h2>Réglages complémentaires</h2><div class="grid">
+<div><div class="label">Budget variables max (€)</div><input id="budgetSetting" type="number" step="0.01"></div>
+<button class="primary" onclick="saveSettings()">Sauvegarder</button>
+<button class="danger" onclick="resetAll()">Réinitialiser</button>
+</div></div>
+</div>
+
+<div class="tabs">
+<div class="tab active" data-tab="home" onclick="showTab('home')">Accueil</div>
+<div class="tab" data-tab="add" onclick="showTab('add')">Ajouter</div>
+<div class="tab" data-tab="fixed" onclick="showTab('fixed')">Fixes</div>
+<div class="tab" data-tab="view_fixes" onclick="showTab('view_fixes')">Vue fixes</div>
+<div class="tab" data-tab="summary" onclick="showTab('summary')">Résumé</div>
 </div>
 
 <script>
+const KEY="budget_alexandre_v3";
+const CATEGORIES=["Fixes","Courses","Transport","Abonnements","Virements","Plaisir","Santé","Divers","Revenus"];
+const defaultState={
+settings:{salary:2200,variableBudget:1200,savePct:15,safePct:10,lifePct:75},
+fixedTemplates:[
+{description:"Loyer / crédit",amount:500,category:"Fixes"},
+{description:"EDF",amount:100,category:"Fixes"},
+{description:"Tel Alex",amount:20,category:"Fixes"},
+{description:"Tel Noam",amount:20,category:"Fixes"},
+{description:"Assurance prêt",amount:28,category:"Fixes"},
+{description:"Frais banque",amount:9,category:"Fixes"},
+{description:"ChatGPT",amount:23,category:"Abonnements"},
+{description:"Assurance voiture",amount:41,category:"Fixes"},
+{description:"Assurance maison",amount:45,category:"Fixes"},
+{description:"Deezer",amount:20,category:"Abonnements"},
+{description:"Appel",amount:1,category:"Abonnements"},
+{description:"Amazon",amount:7,category:"Abonnements"},
+{description:"Internet",amount:53,category:"Fixes"},
+{description:"Mutuelle",amount:37,category:"Fixes"},
+{description:"Impôts fonciers",amount:87,category:"Fixes"}],
+entries:[]
+};
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadState(){const raw=localStorage.getItem(KEY);if(!raw){localStorage.setItem(KEY,JSON.stringify(defaultState));return clone(defaultState)}try{return JSON.parse(raw)}catch(e){localStorage.setItem(KEY,JSON.stringify(defaultState));return clone(defaultState)}}
+let state=loadState();
+function saveState(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function euro(v){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(v)}
+function today(){return new Date().toISOString().slice(0,10)}
+function monthKey(ds){const d=new Date(ds);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
+function nowMonthKey(){return monthKey(today())}
+function nowLabel(){return new Date().toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}
+function escapeHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function fillCategorySelect(id,selected){const el=document.getElementById(id);el.innerHTML=CATEGORIES.map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join("")}
+function autoCategory(desc){const d=(desc||"").toUpperCase();if(d.includes("CARREFOUR")||d.includes("LECLERC")||d.includes("SUPER U"))return"Courses";if(d.includes("FOURNIL")||d.includes("MAXICOFFEE")||d.includes("MCDO")||d.includes("BURGER")||d.includes("PAIN")||d.includes("SNACK"))return"Plaisir";if(d.includes("DOCTEUR")||d.includes("PHCIE")||d.includes("CLINIQUE")||d.includes("VETERIN"))return"Santé";if(d.includes("DEEZER")||d.includes("APPLE")||d.includes("AMAZON")||d.includes("CHATGPT")||d.includes("ABONN"))return"Abonnements";if(d.includes("EDF")||d.includes("ORANGE")||d.includes("BOUYGUES")||d.includes("GAN")||d.includes("GENERATION")||d.includes("PRÊT")||d.includes("PRET")||d.includes("ASSURANCE")||d.includes("LOYER")||d.includes("CREDIT")||d.includes("FONCIER"))return"Fixes";if(d.includes("VIR")||d.includes("WERO"))return"Virements";return"Divers"}
+function suggestCategory(){const desc=document.getElementById("descInput").value;const type=document.getElementById("typeInput").value;document.getElementById("categoryInput").value=type==="income"?"Revenus":autoCategory(desc)}
+function fixedTotal(){return state.fixedTemplates.reduce((s,x)=>s+Math.abs(Number(x.amount)||0),0)}
+function entriesThisMonth(){const mk=nowMonthKey();return state.entries.filter(e=>monthKey(e.date)===mk)}
+function summary(){const entries=entriesThisMonth();const manualIncome=entries.filter(e=>e.amount>0).reduce((s,e)=>s+e.amount,0);const variableExpenses=Math.abs(entries.filter(e=>e.amount<0&&!e.seeded).reduce((s,e)=>s+e.amount,0));const fixedLoaded=Math.abs(entries.filter(e=>e.amount<0&&e.seeded).reduce((s,e)=>s+e.amount,0));const salary=Number(state.settings.salary)||0;const savePct=Number(state.settings.savePct)||0;const safePct=Number(state.settings.safePct)||0;const lifePct=Number(state.settings.lifePct)||0;const saveAmt=salary*savePct/100;const safeAmt=salary*safePct/100;const budgetDispo=salary-saveAmt-safeAmt;const totalIncome=salary+manualIncome;const totalExpenses=variableExpenses+fixedLoaded;const remaining=budgetDispo;const realRemaining=budgetDispo+manualIncome-fixedTotal()-variableExpenses;const byCat={};entries.forEach(e=>byCat[e.category]=(byCat[e.category]||0)+e.amount);return{entries,salary,totalIncome,variableExpenses,fixedLoaded,totalExpenses,remaining,realRemaining,byCat,savePct,safePct,lifePct,saveAmt,safeAmt,budgetDispo,manualIncome}}
+function showTab(name){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(name).classList.add("active");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelector(`.tab[data-tab="${name}"]`).classList.add("active")}
 
-let page="accueil"
-
-// DATA
-function getOps(){return JSON.parse(localStorage.getItem("ops")||"[]")}
-function saveOps(d){localStorage.setItem("ops",JSON.stringify(d))}
-function getFixes(){return JSON.parse(localStorage.getItem("fixes")||"[]")}
-function saveFixes(d){localStorage.setItem("fixes",JSON.stringify(d))}
-
-// CALCUL
-function total(type){
-return getOps().filter(o=>o.type===type).reduce((t,o)=>t+Number(o.montant),0)
+function openQuick(category,description,amount){document.getElementById("quickEditor").style.display="block";document.getElementById("quickDesc").value=description;document.getElementById("quickAmount").value=amount;document.getElementById("quickCategory").value=category}
+function closeQuick(){document.getElementById("quickEditor").style.display="none"}
+function saveQuick(){const description=document.getElementById("quickDesc").value.trim();const amount=parseFloat(document.getElementById("quickAmount").value);const category=document.getElementById("quickCategory").value;if(!description||isNaN(amount)||amount<=0){alert("Montant ou description invalide.");return}state.entries.unshift({id:Date.now(),date:today(),description,amount:-Math.abs(amount),category,seeded:false});saveState();closeQuick()}
+function addEntry(){const date=document.getElementById("dateInput").value;const description=document.getElementById("descInput").value.trim();const amountVal=parseFloat(document.getElementById("amountInput").value);const type=document.getElementById("typeInput").value;const category=document.getElementById("categoryInput").value;if(!date||!description||isNaN(amountVal)||amountVal<=0){alert("Complète la date, la description et le montant.");return}state.entries.unshift({id:Date.now(),date,description,amount:type==="expense"?-Math.abs(amountVal):Math.abs(amountVal),category,seeded:false});document.getElementById("descInput").value="";document.getElementById("amountInput").value="";document.getElementById("typeInput").value="expense";document.getElementById("categoryInput").value="Divers";saveState();showTab("home")}
+function renderHome(){const s=summary();document.getElementById("monthLabel").textContent=nowLabel();if(document.getElementById("salaryKpi"))document.getElementById("salaryKpi").textContent=euro(s.salary);if(document.getElementById("saveKpi"))document.getElementById("saveKpi").textContent=euro(s.saveAmt);if(document.getElementById("safeKpi"))document.getElementById("safeKpi").textContent=euro(s.safeAmt);if(document.getElementById("budgetDispoKpi"))document.getElementById("budgetDispoKpi").textContent=euro(s.budgetDispo);if(document.getElementById("fixedKpi"))document.getElementById("fixedKpi").textContent=euro(s.fixedLoaded||fixedTotal());if(document.getElementById("variableKpi"))document.getElementById("variableKpi").textContent=euro(s.variableExpenses);const rr=document.getElementById("realRemainingKpi");if(rr){rr.textContent=euro(s.realRemaining);rr.className='value '+(s.realRemaining>=300?'good':s.realRemaining>=0?'warn':'bad');}const virements=Math.abs(s.byCat["Virements"]||0);const courses=Math.abs(s.byCat["Courses"]||0);let txt='✅ Situation correcte.';if(s.variableExpenses>(Number(state.settings.variableBudget)||0))txt='⚠️ Tu dépasses ton budget variable du mois.';else if(s.realRemaining<0)txt='⚠️ Tu es en négatif sur ton budget réel.';else if(virements>300)txt='⚠️ Virements élevés ce mois.';else if(courses>350)txt='⚠️ Courses au-dessus de ta cible.';else if(s.realRemaining<200)txt='⚠️ Marge réelle faible ce mois.';document.getElementById("alertText").textContent=txt}
+function savePercentSettings(){
+const salary=parseFloat(document.getElementById("salaryHomeInput").value||0);
+const savePct=parseFloat(document.getElementById("savePctInput").value||0);
+const safePct=parseFloat(document.getElementById("safePctInput").value||0);
+const lifePct=parseFloat(document.getElementById("lifePctInput").value||0);
+state.settings.salary=salary;
+state.settings.savePct=savePct;
+state.settings.safePct=safePct;
+state.settings.lifePct=lifePct;
+state.settings.variableBudget=(salary*lifePct/100)-fixedTotal();
+saveState();
+}
+function renderFixed(){document.getElementById("fixedTotalTop").textContent=euro(fixedTotal());const box=document.getElementById("fixedList");box.innerHTML="";state.fixedTemplates.forEach((item,idx)=>{const div=document.createElement("div");div.className="editbox";div.innerHTML=`<div class="grid compact"><div><div class="label">Libellé</div><input value="${escapeHtml(item.description)}" onchange="updateFixed(${idx}, 'description', this.value)"></div><div><div class="label">Montant (€)</div><input type="number" step="0.01" value="${item.amount}" onchange="updateFixed(${idx}, 'amount', this.value)"></div><div><div class="label">Catégorie</div><select id="fixedCat${idx}" onchange="updateFixed(${idx}, 'category', this.value)"></select></div><button class="danger" onclick="deleteFixed(${idx})">Supprimer</button></div>`;box.appendChild(div);div.querySelector(`#fixedCat${idx}`).innerHTML=CATEGORIES.map(c=>`<option ${c===item.category?'selected':''}>${c}</option>`).join("")})}
+function updateFixed(index,field,value){if(field==="amount")value=parseFloat(value||0);state.fixedTemplates[index][field]=value;saveState()}
+function deleteFixed(index){if(!confirm("Supprimer ce frais fixe ?"))return;state.fixedTemplates.splice(index,1);saveState()}
+function addFixedTemplate(){state.fixedTemplates.push({description:"Nouveau frais fixe",amount:0,category:"Fixes"});saveState()}
+function saveNewFixed(){
+const desc=document.getElementById("newFixedDesc").value.trim();
+const amount=parseFloat(document.getElementById("newFixedAmount").value);
+const category=document.getElementById("newFixedCategory").value;
+if(!desc||isNaN(amount)||amount<=0){alert("Renseigne un libellé et un montant valide.");return;}
+state.fixedTemplates.push({description:desc,amount:amount,category:category});
+document.getElementById("newFixedDesc").value="";
+document.getElementById("newFixedAmount").value="";
+document.getElementById("newFixedCategory").value="Fixes";
+saveState();
+alert("Frais fixe ajouté.");
+}
+function seedCurrentMonth(){const mk=nowMonthKey();if(state.entries.some(e=>e.seeded&&monthKey(e.date)===mk)){alert("Les frais fixes de ce mois sont déjà chargés.");return}const date=mk+"-01";state.fixedTemplates.forEach(item=>{if(Number(item.amount)>0){state.entries.unshift({id:Date.now()+Math.random(),date,description:item.description,amount:-Math.abs(Number(item.amount)),category:item.category,seeded:true})}});saveState();alert("Frais fixes du mois ajoutés.")}
+function renderViewFixes(){
+const box=document.getElementById("viewFixedList");
+const totalEl=document.getElementById("viewFixedTotal");
+if(!box||!totalEl)return;
+totalEl.textContent=euro(fixedTotal());
+box.innerHTML="";
+state.fixedTemplates.forEach(item=>{
+const row=document.createElement("div");
+row.className="row";
+row.innerHTML=`<div><div class="desc">${escapeHtml(item.description)}</div><div class="sub">${escapeHtml(item.category)}</div></div><div class="amount bad">${euro(Number(item.amount)||0)}</div>`;
+box.appendChild(row);
+});
 }
 
-function totalFixes(){
-return getFixes().reduce((t,f)=>t+Number(f.montant),0)
-}
-
-function calcul(){
-const salaire=Number(localStorage.getItem("salaire")||2200)
-const pctEpargne=Number(localStorage.getItem("epargne")||15)
-const pctSecu=Number(localStorage.getItem("secu")||10)
-
-const epargne=salaire*pctEpargne/100
-const securite=salaire*pctSecu/100
-const budgetPrevu=salaire-epargne-securite
-
-const revenus=total("Revenu")
-const variables=total("Dépense")
-const fixes=totalFixes()
-
-const dispoReel=budgetPrevu+revenus-fixes-variables
-
-return{ salaire,epargne,securite,budgetPrevu,revenus,variables,fixes,dispoReel}
-}
-
-// ACCUEIL
-function accueil(){
-const c=calcul()
-return `
-<h1>Budget</h1>
-
-<div class="grid">
-<div class="card"><div>Budget prévu</div><div class="big blue">${c.budgetPrevu}€</div></div>
-<div class="card"><div>Fixes</div><div class="big red">${c.fixes}€</div></div>
-
-<div class="card"><div>Variables</div><div class="big red">${c.variables}€</div></div>
-<div class="card"><div>Revenus</div><div class="big green">${c.revenus}€</div></div>
-
-<div class="card" style="grid-column:1/3">
-<div>Disponible réel</div>
-<div class="big green">${c.dispoReel}€</div>
-</div>
-</div>
-
-<div class="card">
-<div>Boutons rapides</div>
-
-<div class="quick">
-<button onclick="quick('Courses')">Courses</button>
-<button onclick="quick('Essence')">Essence</button>
-<button onclick="quick('Plaisir')">Plaisir</button>
-<button onclick="quick('Maison')">Maison</button>
-<button onclick="quick('Enfants')">Enfants</button>
-<button onclick="quick('Divers')">Divers</button>
-</div>
-</div>
-`
-}
-
-// QUICK
-function quick(cat){
-const montant=prompt("Montant pour "+cat)
-if(!montant)return
-
-const ops=getOps()
-ops.push({desc:cat,montant:Number(montant),type:"Dépense"})
-saveOps(ops)
-render()
-}
-
-// AJOUT
-function ajouter(){
-return `
-<h1>Ajouter</h1>
-<input id="desc" placeholder="Description">
-<input id="montant" placeholder="Montant">
-<select id="type">
-<option>Dépense</option>
-<option>Revenu</option>
-</select>
-<button onclick="addOp()">Valider</button>
-`
-}
-
-function addOp(){
-const ops=getOps()
-ops.push({
-desc:document.getElementById("desc").value,
-montant:Number(document.getElementById("montant").value),
-type:document.getElementById("type").value
-})
-saveOps(ops)
-render()
-}
-
-// FIXES
-function fixes(){
-const list=getFixes().map((f,i)=>`
-<div class="card">
-${f.desc} - ${f.montant}€
-<button onclick="delFix(${i})">Supprimer</button>
-</div>`).join("")
-
-return `
-<h1>Fixes</h1>
-<input id="fdesc" placeholder="Libellé">
-<input id="fmontant" placeholder="Montant">
-<button onclick="addFix()">Ajouter</button>
-${list}
-`
-}
-
-function addFix(){
-const f=getFixes()
-f.push({desc:document.getElementById("fdesc").value,montant:Number(document.getElementById("fmontant").value)})
-saveFixes(f)
-render()
-}
-
-function delFix(i){
-const f=getFixes()
-f.splice(i,1)
-saveFixes(f)
-render()
-}
-
-// REGLAGES
-function reglages(){
-const salaire=localStorage.getItem("salaire")||2200
-const epargne=localStorage.getItem("epargne")||15
-const secu=localStorage.getItem("secu")||10
-
-return `
-<h1>Réglages</h1>
-
-<div class="card">
-Salaire
-<input id="sal" value="${salaire}">
-% Épargne
-<input id="epar" value="${epargne}">
-% Sécurité
-<input id="sec" value="${secu}">
-<button onclick="saveReglages()">Enregistrer</button>
-</div>
-`
-}
-
-function saveReglages(){
-localStorage.setItem("salaire",document.getElementById("sal").value)
-localStorage.setItem("epargne",document.getElementById("epar").value)
-localStorage.setItem("secu",document.getElementById("sec").value)
-render()
-}
-
-// RENDER
-function render(){
-if(page==="accueil")app.innerHTML=accueil()
-if(page==="ajouter")app.innerHTML=ajouter()
-if(page==="fixes")app.innerHTML=fixes()
-if(page==="reglages")app.innerHTML=reglages()
-}
-
-render()
-
+function renderSummary(){const sTop=summary();if(document.getElementById("salaryHomeInput"))document.getElementById("salaryHomeInput").value=sTop.salary;if(document.getElementById("savePctInput"))document.getElementById("savePctInput").value=sTop.savePct;if(document.getElementById("safePctInput"))document.getElementById("safePctInput").value=sTop.safePct;if(document.getElementById("lifePctInput"))document.getElementById("lifePctInput").value=sTop.lifePct;const totalPct=sTop.savePct+sTop.safePct+sTop.lifePct;const pc=document.getElementById("percentCheck");if(pc){pc.textContent='Total pourcentages : '+totalPct+'%';if(totalPct!==100){pc.textContent+=' — ajuste pour arriver à 100%';}}const s=summary();const catBox=document.getElementById("categorySummary");catBox.innerHTML="";CATEGORIES.forEach(cat=>{const raw=s.byCat[cat]||0;if(raw===0)return;const row=document.createElement("div");row.className="row";row.innerHTML=`<div class="desc">${cat}</div><div class="amount ${raw<0?'bad':'good'}">${euro(raw)}</div>`;catBox.appendChild(row)});const box=document.getElementById("entriesList");box.innerHTML="";if(s.entries.length===0){box.innerHTML='<div class="small">Aucune opération ce mois.</div>'}else{s.entries.forEach((e,idx)=>{const row=document.createElement("div");row.className="editbox";row.innerHTML=`<div class="grid compact"><div><div class="label">Date</div><input type="date" value="${e.date}" onchange="updateEntry(${e.id}, 'date', this.value)"></div><div><div class="label">Description</div><input value="${escapeHtml(e.description)}" onchange="updateEntry(${e.id}, 'description', this.value)"></div><div><div class="label">Montant (€)</div><input type="number" step="0.01" value="${Math.abs(e.amount)}" onchange="updateEntryAmount(${e.id}, this.value)"></div><div><div class="label">Catégorie</div><select id="entryCat${idx}" onchange="updateEntry(${e.id}, 'category', this.value)"></select></div><div class="inline" style="justify-content:space-between"><div class="small">${e.seeded?'Frais fixe chargé':'Opération saisie'}</div><button class="danger" style="width:auto;padding:10px 12px" onclick="deleteEntry(${e.id})">Supprimer</button></div></div>`;box.appendChild(row);row.querySelector(`#entryCat${idx}`).innerHTML=CATEGORIES.map(c=>`<option ${c===e.category?'selected':''}>${c}</option>`).join("")})}document.getElementById("salarySetting").value=state.settings.salary;document.getElementById("budgetSetting").value=state.settings.variableBudget}
+function updateEntry(id,field,value){const e=state.entries.find(x=>x.id===id);if(!e)return;e[field]=value;saveState()}
+function updateEntryAmount(id,value){const e=state.entries.find(x=>x.id===id);if(!e)return;const v=parseFloat(value||0);if(isNaN(v)||v<0)return;e.amount=e.amount<0?-Math.abs(v):Math.abs(v);saveState()}
+function deleteEntry(id){if(!confirm("Supprimer cette opération ?"))return;state.entries=state.entries.filter(x=>x.id!==id);saveState()}
+function saveSettings(){state.settings.variableBudget=val("budgetSetting",state.settings.variableBudget);saveState();alert("Réglages sauvegardés.")}
+function resetAll(){if(!confirm("Tout effacer ?"))return;localStorage.removeItem(KEY);state=loadState();renderAll()}
+function renderAll(){fillCategorySelect("quickCategory","Courses");fillCategorySelect("categoryInput","Divers");fillCategorySelect("newFixedCategory","Fixes");document.getElementById("dateInput").value=today();renderHome();renderFixed();renderViewFixes();renderSummary()}
+renderAll();
 </script>
 </body>
 </html>
