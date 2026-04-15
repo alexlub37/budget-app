@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Budget Alexandre V4.5.3</title>
+<title>Budget Alexandre V4.5.4</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue2:#dbeafe;--green:#166534;--green2:#dcfce7;--red:#b91c1c;--red2:#fee2e2;--amber:#b45309}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
@@ -20,7 +20,7 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 </head>
 <body>
 <div class="app">
-<div class="topnote">V4.5.3 simplifiée : vrais frais fixes, ajout rapide, modification et suppression des opérations.</div>
+<div class="topnote">V4.5.4 simplifiée : vrais frais fixes, ajout rapide, modification et suppression des opérations.</div>
 
 <div id="home" class="screen active">
 <h1>Budget Alexandre</h1>
@@ -105,8 +105,8 @@ input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid 
 
 <div id="summary" class="screen">
 <h1>Résumé</h1>
-<div class="card"><h2>Répartition du salaire</h2><div class="grid compact">
-<div><div class="label">Salaire réel (€)</div><input id="salaryHomeInput" type="number" step="0.01" onchange="savePercentSettings()"></div>
+<div class="card"><h2>Répartition du revenu</h2><div class="grid compact">
+<div><div class="label">Revenu fixe (€)</div><input id="salaryHomeInput" type="number" step="0.01" onchange="savePercentSettings()"></div>
 <div><div class="label">% Épargne</div><input id="savePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
 <div><div class="label">% Sécurité</div><input id="safePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
 <div><div class="label">% Budget quotidien</div><input id="lifePctInput" type="number" step="1" onchange="savePercentSettings()"></div>
@@ -171,8 +171,9 @@ function showTab(name){document.querySelectorAll(".screen").forEach(x=>x.classLi
 
 function openQuick(category,description,amount){document.getElementById("quickEditor").style.display="block";document.getElementById("quickDesc").value=description;document.getElementById("quickAmount").value=amount;document.getElementById("quickCategory").value=category}
 function closeQuick(){
-const editor=document.getElementById("quickEditor");
-if(editor) editor.style.display="none";
+state.quickOpen=false;
+const q=document.getElementById("quickEditor");
+if(q) q.style.display="none";
 const d=document.getElementById("quickDesc");
 const a=document.getElementById("quickAmount");
 const c=document.getElementById("quickCategory");
@@ -186,11 +187,11 @@ const amount=parseFloat(document.getElementById("quickAmount").value);
 const category=document.getElementById("quickCategory").value;
 if(!description||isNaN(amount)||amount<=0){alert("Montant ou description invalide.");return}
 state.entries.unshift({id:Date.now(),date:today(),description,amount:-Math.abs(amount),category,seeded:false});
-closeQuick();
+state.quickOpen=false;
 saveState();
 }
 function addEntry(){const date=document.getElementById("dateInput").value;const description=document.getElementById("descInput").value.trim();const amountVal=parseFloat(document.getElementById("amountInput").value);const type=document.getElementById("typeInput").value;const category=document.getElementById("categoryInput").value;if(!date||!description||isNaN(amountVal)||amountVal<=0){alert("Complète la date, la description et le montant.");return}state.entries.unshift({id:Date.now(),date,description,amount:type==="expense"?-Math.abs(amountVal):Math.abs(amountVal),category,seeded:false});document.getElementById("descInput").value="";document.getElementById("amountInput").value="";document.getElementById("typeInput").value="expense";document.getElementById("categoryInput").value="Divers";saveState();showTab("home")}
-function renderHome(){const s=summary();document.getElementById("monthLabel").textContent=nowLabel();if(document.getElementById("salaryKpi"))document.getElementById("salaryKpi").textContent=euro(s.salary);if(document.getElementById("saveKpi"))document.getElementById("saveKpi").textContent=euro(s.saveAmt);if(document.getElementById("safeKpi"))document.getElementById("safeKpi").textContent=euro(s.safeAmt);if(document.getElementById("budgetDispoKpi"))document.getElementById("budgetDispoKpi").textContent=euro(s.budgetDispo);if(document.getElementById("fixedKpi"))document.getElementById("fixedKpi").textContent=euro(s.fixedLoaded||fixedTotal());if(document.getElementById("variableKpi"))document.getElementById("variableKpi").textContent=euro(s.variableExpenses);const rr=document.getElementById("realRemainingKpi");if(rr){rr.textContent=euro(s.realRemaining);rr.className='value '+(s.realRemaining>=300?'good':s.realRemaining>=0?'warn':'bad');}const virements=Math.abs(s.byCat["Virements"]||0);const courses=Math.abs(s.byCat["Courses"]||0);let txt='✅ Situation correcte.';if(s.variableExpenses>(Number(state.settings.variableBudget)||0))txt='⚠️ Tu dépasses ton budget variable du mois.';else if(s.realRemaining<0)txt='⚠️ Tu es en négatif sur ton budget réel.';else if(virements>300)txt='⚠️ Virements élevés ce mois.';else if(courses>350)txt='⚠️ Courses au-dessus de ta cible.';else if(s.realRemaining<200)txt='⚠️ Marge réelle faible ce mois.';document.getElementById("alertText").textContent=txt}
+function renderHome(){const s=summary();document.getElementById("monthLabel").textContent=nowLabel();if(document.getElementById("budgetDispoKpi"))document.getElementById("budgetDispoKpi").textContent=euro(s.budgetDispo);if(document.getElementById("fixedKpi"))document.getElementById("fixedKpi").textContent=euro(s.fixedLoaded||fixedTotal());if(document.getElementById("variableKpi"))document.getElementById("variableKpi").textContent=euro(s.variableExpenses);if(document.getElementById("revenuesKpi"))document.getElementById("revenuesKpi").textContent=euro(s.manualIncome||0);const rr=document.getElementById("realRemainingKpi");if(rr){rr.textContent=euro(s.realRemaining);rr.className='value '+(s.realRemaining>=300?'good':s.realRemaining>=0?'warn':'bad');}const virements=Math.abs(s.byCat["Virements"]||0);const courses=Math.abs(s.byCat["Courses"]||0);let txt='✅ Situation correcte.';if(s.variableExpenses>(Number(state.settings.variableBudget)||0))txt='⚠️ Tu dépasses ton budget variable du mois.';else if(s.realRemaining<0)txt='⚠️ Tu es en négatif sur ton budget réel.';else if(virements>300)txt='⚠️ Virements élevés ce mois.';else if(courses>350)txt='⚠️ Courses au-dessus de ta cible.';else if(s.realRemaining<200)txt='⚠️ Marge réelle faible ce mois.';document.getElementById("alertText").textContent=txt}
 function savePercentSettings(){
 const salary=parseFloat(document.getElementById("salaryHomeInput").value||0);
 const savePct=parseFloat(document.getElementById("savePctInput").value||0);
