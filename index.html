@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Budget Alexandre V5.1</title>
+<title>Budget Alexandre V5.2</title>
 <style>
 :root{
   --bg:#f5f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
@@ -86,18 +86,11 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
     </div>
     <div class="field">
       <label>Catégorie</label>
-      <select id="addCategory">
-        <option>Courses</option>
-        <option>Boulangerie</option>
-        <option>Snack</option>
-        <option>Carburant</option>
-        <option>Santé</option>
-        <option>Virement</option>
-        <option>Divers</option>
-        <option>Fixes</option>
-        <option>Abonnements</option>
-        <option>Revenus</option>
-      </select>
+      <select id="addCategory"></select>
+    </div>
+    <div class="field">
+      <label>Nouvelle catégorie (option)</label>
+      <input class="input" id="newCategoryInput" placeholder="Ex : Chiens">
     </div>
     <button class="btn btn-primary" onclick="saveEntry()">Enregistrer</button>
   </div>
@@ -214,7 +207,8 @@ function defaultData(){
       {id:14, desc:"Mutuelle", montant:37, type:"Fixes"},
       {id:15, desc:"Impôts fonciers", montant:87, type:"Fixes"}
     ],
-    operations:[]
+    operations:[],
+    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
   };
 }
 
@@ -222,7 +216,9 @@ function loadData(){
   try{
     const raw = localStorage.getItem(KEY);
     if(!raw) return defaultData();
-    return {...defaultData(), ...JSON.parse(raw)};
+    const parsed = JSON.parse(raw);
+    const base = defaultData();
+    return {...base, ...parsed, categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories};
   }catch(e){
     return defaultData();
   }
@@ -276,21 +272,41 @@ function quickAdd(label, category){
   saveData();
 }
 
+function fillCategorySelect(){
+  const sel = document.getElementById("addCategory");
+  if(!sel) return;
+  const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
+  sel.innerHTML = cats.map(c => `<option>${c}</option>`).join("");
+}
+
 function saveEntry(){
   const desc = (document.getElementById("addDesc").value || "").trim();
   const amount = parseFloat(String(document.getElementById("addAmount").value || "").replace(",", "."));
   const type = document.getElementById("addType").value;
-  const category = document.getElementById("addCategory").value;
+  const selectedCategory = document.getElementById("addCategory").value;
+  const newCategory = (document.getElementById("newCategoryInput").value || "").trim();
+
+  let category = selectedCategory;
+  if(newCategory){
+    if(!data.categories.includes(newCategory)){
+      data.categories.push(newCategory);
+    }
+    category = newCategory;
+  }
+
   if(!desc || isNaN(amount) || amount <= 0){
     alert("Renseigne une description et un montant valide.");
     return;
   }
+
   data.operations.unshift({
     id: Date.now() + Math.random(),
     desc, montant: amount, type, category
   });
+
   document.getElementById("addDesc").value = "";
   document.getElementById("addAmount").value = "";
+  document.getElementById("newCategoryInput").value = "";
   saveData();
 }
 
@@ -364,6 +380,10 @@ function renderHome(){
   document.getElementById("fixesHome").textContent = euro(t.fixes);
   document.getElementById("variablesHome").textContent = euro(t.variables);
   document.getElementById("revenusHome").textContent = euro(t.revenus);
+}
+
+function renderAdd(){
+  fillCategorySelect();
 }
 
 function renderFixed(){
@@ -448,6 +468,7 @@ function renderAll(){
   document.getElementById(data.tab || "home").classList.add("active");
   document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === (data.tab || "home")));
   renderHome();
+  renderAdd();
   renderFixed();
   renderView();
   renderSummary();
