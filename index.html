@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Budget Alexandre V4.7.4</title>
+<title>Budget Alexandre V4.8</title>
 <style>
 :root{
   --bg:#f5f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
@@ -17,6 +17,7 @@ h2{font-size:28px;margin:10px 0 14px}
 .btn{background:var(--blue-soft);color:#1d4ed8;padding:14px;border-radius:14px;text-align:center;font-weight:700;border:none;cursor:pointer;width:100%}
 .btn-primary{background:var(--blue);color:#fff}
 .btn-danger{background:#fee2e2;color:#b91c1c}
+.btn-success{background:#dcfce7;color:#166534}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{margin-bottom:12px}
 label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
@@ -93,6 +94,8 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
         <option>Santé</option>
         <option>Virement</option>
         <option>Divers</option>
+        <option>Fixes</option>
+        <option>Abonnements</option>
         <option>Revenus</option>
       </select>
     </div>
@@ -112,7 +115,16 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
       <label>Montant (€)</label>
       <input class="input" id="fixedAmount" type="number" step="0.01" inputmode="decimal">
     </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="fixedKind">
+        <option>Fixes</option>
+        <option>Abonnements</option>
+      </select>
+    </div>
     <button class="btn btn-primary" onclick="saveFixed()">Ajouter</button>
+    <button class="btn btn-success" onclick="updateFixesNow()">Mettre à jour les fixes</button>
+    <div class="small">Le bouton met à jour l’affichage mensuel à partir de ta liste de fixes.</div>
   </div>
   <div class="card" id="fixedList"></div>
 </div>
@@ -125,22 +137,35 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
   </div>
 </div>
 
-<div id="gestion" class="section">
-  <h2>Gestion</h2>
+<div id="summary" class="section">
+  <h2>Résumé</h2>
   <div class="card">
     <div class="field">
-      <label>Salaire</label>
+      <label>Revenu fixe (€)</label>
       <input class="input" id="inputSalaire" type="number" step="0.01" inputmode="decimal">
     </div>
     <div class="field">
-      <label>Épargne</label>
+      <label>Épargne (€)</label>
       <input class="input" id="inputEpargne" type="number" step="0.01" inputmode="decimal">
     </div>
     <div class="field">
-      <label>Sécurité</label>
+      <label>Sécurité (€)</label>
       <input class="input" id="inputSecu" type="number" step="0.01" inputmode="decimal">
     </div>
     <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Répartition du départ</div>
+    <div class="row"><div>Salaire</div><div class="amount good" id="sumSalaire">0 €</div></div>
+    <div class="row"><div>Épargne</div><div class="amount" id="sumEpargne">0 €</div></div>
+    <div class="row"><div>Sécurité</div><div class="amount" id="sumSecu">0 €</div></div>
+    <div class="row"><div>Budget du mois</div><div class="amount" id="sumBudget">0 €</div></div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Par catégorie</div>
+    <div id="catSummary"></div>
   </div>
 
   <div class="card">
@@ -154,11 +179,11 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
   <button data-tab="add" onclick="showTab('add')">Ajouter</button>
   <button data-tab="fixed" onclick="showTab('fixed')">Fixes</button>
   <button data-tab="view" onclick="showTab('view')">Vue fixes</button>
-  <button data-tab="gestion" onclick="showTab('gestion')">Gestion</button>
+  <button data-tab="summary" onclick="showTab('summary')">Résumé</button>
 </div>
 
 <script>
-const KEY = "budget_v474";
+const KEY = "budget_v48";
 
 function defaultData(){
   return {
@@ -167,21 +192,21 @@ function defaultData(){
     epargne:600,
     secu:600,
     fixes:[
-      {id:1, desc:"Loyer / crédit", montant:500},
-      {id:2, desc:"EDF", montant:100},
-      {id:3, desc:"Tel Alex", montant:20},
-      {id:4, desc:"Tel Noam", montant:20},
-      {id:5, desc:"Assurance prêt", montant:28},
-      {id:6, desc:"Frais banque", montant:9},
-      {id:7, desc:"ChatGPT", montant:23},
-      {id:8, desc:"Assurance voiture", montant:41},
-      {id:9, desc:"Assurance maison", montant:45},
-      {id:10, desc:"Deezer", montant:20},
-      {id:11, desc:"Appel", montant:1},
-      {id:12, desc:"Amazon", montant:7},
-      {id:13, desc:"Internet", montant:53},
-      {id:14, desc:"Mutuelle", montant:37},
-      {id:15, desc:"Impôts fonciers", montant:87}
+      {id:1, desc:"Loyer / crédit", montant:500, type:"Fixes"},
+      {id:2, desc:"EDF", montant:100, type:"Fixes"},
+      {id:3, desc:"Tel Alex", montant:20, type:"Fixes"},
+      {id:4, desc:"Tel Noam", montant:20, type:"Fixes"},
+      {id:5, desc:"Assurance prêt", montant:28, type:"Fixes"},
+      {id:6, desc:"Frais banque", montant:9, type:"Fixes"},
+      {id:7, desc:"ChatGPT", montant:23, type:"Abonnements"},
+      {id:8, desc:"Assurance voiture", montant:41, type:"Fixes"},
+      {id:9, desc:"Assurance maison", montant:45, type:"Fixes"},
+      {id:10, desc:"Deezer", montant:20, type:"Abonnements"},
+      {id:11, desc:"Appel", montant:1, type:"Abonnements"},
+      {id:12, desc:"Amazon", montant:7, type:"Abonnements"},
+      {id:13, desc:"Internet", montant:53, type:"Abonnements"},
+      {id:14, desc:"Mutuelle", montant:37, type:"Fixes"},
+      {id:15, desc:"Impôts fonciers", montant:87, type:"Fixes"}
     ],
     operations:[]
   };
@@ -260,17 +285,23 @@ function saveEntry(){
 function saveFixed(){
   const desc = (document.getElementById("fixedDesc").value || "").trim();
   const amount = parseFloat(String(document.getElementById("fixedAmount").value || "").replace(",", "."));
+  const type = document.getElementById("fixedKind").value;
   if(!desc || isNaN(amount) || amount <= 0){
     alert("Renseigne un libellé et un montant valide.");
     return;
   }
   data.fixes.push({
     id: Date.now() + Math.random(),
-    desc, montant: amount
+    desc, montant: amount, type
   });
   document.getElementById("fixedDesc").value = "";
   document.getElementById("fixedAmount").value = "";
   saveData();
+}
+
+function updateFixesNow(){
+  alert("Les fixes sont déjà pris en compte dans le calcul mensuel.");
+  renderAll();
 }
 
 function deleteFixed(id){
@@ -278,15 +309,15 @@ function deleteFixed(id){
   saveData();
 }
 
-function deleteOp(id){
-  data.operations = data.operations.filter(o => o.id !== id);
-  saveData();
-}
-
 function saveSettings(){
   data.salaire = parseFloat(String(document.getElementById("inputSalaire").value || data.salaire).replace(",", ".")) || data.salaire;
   data.epargne = parseFloat(String(document.getElementById("inputEpargne").value || data.epargne).replace(",", ".")) || data.epargne;
   data.secu = parseFloat(String(document.getElementById("inputSecu").value || data.secu).replace(",", ".")) || data.secu;
+  saveData();
+}
+
+function deleteOp(id){
+  data.operations = data.operations.filter(o => o.id !== id);
   saveData();
 }
 
@@ -308,7 +339,10 @@ function renderFixed(){
   document.getElementById("fixesTotalFixed").textContent = euro(t.fixes);
   document.getElementById("fixedList").innerHTML = data.fixes.map(f => `
     <div class="row">
-      <div>${f.desc}</div>
+      <div>
+        <div>${f.desc}</div>
+        <div class="small">${f.type}</div>
+      </div>
       <div>
         <span class="amount bad">${euro(f.montant)}</span><br>
         <button class="btn btn-danger" style="margin-top:8px" onclick="deleteFixed(${f.id})">Supprimer</button>
@@ -322,17 +356,36 @@ function renderView(){
   document.getElementById("fixesTotalView").textContent = euro(t.fixes);
   document.getElementById("fixesViewList").innerHTML = data.fixes.map(f => `
     <div class="row">
-      <div>${f.desc}</div>
+      <div>
+        <div>${f.desc}</div>
+        <div class="small">${f.type}</div>
+      </div>
       <div class="amount bad">${euro(f.montant)}</div>
     </div>
   `).join("") || `<div class="small">Aucun fixe.</div>`;
 }
 
-function renderGestion(){
+function renderSummary(){
   const t = totals();
   document.getElementById("inputSalaire").value = data.salaire;
   document.getElementById("inputEpargne").value = data.epargne;
   document.getElementById("inputSecu").value = data.secu;
+  document.getElementById("sumSalaire").textContent = euro(data.salaire);
+  document.getElementById("sumEpargne").textContent = euro(data.epargne);
+  document.getElementById("sumSecu").textContent = euro(data.secu);
+  document.getElementById("sumBudget").textContent = euro(t.budget);
+
+  const byCat = {};
+  data.fixes.forEach(f => { byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant||0); });
+  data.operations.forEach(o => { byCat[o.category] = (byCat[o.category] || 0) + (o.type==="Revenu" ? Number(o.montant||0) : -Number(o.montant||0)); });
+
+  document.getElementById("catSummary").innerHTML = Object.keys(byCat).sort().map(cat => `
+    <div class="row">
+      <div>${cat}</div>
+      <div class="amount ${byCat[cat] >= 0 ? 'good' : 'bad'}">${euro(byCat[cat])}</div>
+    </div>
+  `).join("") || `<div class="small">Aucune donnée.</div>`;
+
   document.getElementById("opsList").innerHTML = data.operations.map(o => `
     <div class="row">
       <div>
@@ -354,7 +407,7 @@ function renderAll(){
   renderHome();
   renderFixed();
   renderView();
-  renderGestion();
+  renderSummary();
 }
 
 renderAll();
