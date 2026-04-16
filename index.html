@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Budget Alexandre V4.5.5</title>
+<title>Budget Alexandre V4.5.6</title>
 <style>
 :root{
   --bg:#f6f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
@@ -300,6 +300,27 @@ function renderHome(){
           <div class="desc" style="font-size:30px">${nowLabel()}</div>
         </div>
         <div class="pill">Usage quotidien</div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="row" style="padding:0 0 10px 0;border-bottom:1px solid var(--line)">
+          <div>
+            <div class="desc">Résumé du départ</div>
+            <div class="sub">Ta base mensuelle avant les dépenses</div>
+          </div>
+        </div>
+        <div class="row">
+          <div><div class="sub">Salaire</div></div>
+          <div class="amount good">${euro(s.salary)}</div>
+        </div>
+        <div class="row">
+          <div><div class="sub">Épargne</div></div>
+          <div class="amount">${euro(s.saveAmt)}</div>
+        </div>
+        <div class="row">
+          <div><div class="sub">Sécurité</div></div>
+          <div class="amount">${euro(s.safeAmt)}</div>
+        </div>
       </div>
 
       <div class="bigbox">
