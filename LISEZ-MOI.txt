@@ -1,0 +1,18 @@
+Pack YoNo Budget complet
+
+Contenu :
+- index.html : appli complète V5.4
+- manifest.json : installation PWA
+- icon-1024.png / 512 / 192 / 180 : icônes
+- logo-yono-budget.png : logo source
+
+Pour mettre à jour GitHub :
+1. Ouvre ton dépôt
+2. Add file > Upload files
+3. Envoie tous les fichiers de ce dossier
+4. Remplace les anciens
+5. Commit changes
+
+Ensuite :
+- ouvre ton lien GitHub Pages
+- partage > Sur l’écran d’accueil
