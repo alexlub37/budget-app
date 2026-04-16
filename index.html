@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget</title>
+<title>YoNo Budget V6</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#22c55e">
 <style>
 :root{
   --bg:#f5f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
@@ -220,26 +221,10 @@ const KEY = "budget_v48";
 function defaultData(){
   return {
     tab:"home",
-    salaire:3000,
+    salaire:0,
     pctEpargne:20,
     pctSecu:20,
-    fixes:[
-      {id:1, desc:"Loyer / crédit", montant:500, type:"Fixes"},
-      {id:2, desc:"EDF", montant:100, type:"Fixes"},
-      {id:3, desc:"Tel Alex", montant:20, type:"Fixes"},
-      {id:4, desc:"Tel Noam", montant:20, type:"Fixes"},
-      {id:5, desc:"Assurance prêt", montant:28, type:"Fixes"},
-      {id:6, desc:"Frais banque", montant:9, type:"Fixes"},
-      {id:7, desc:"ChatGPT", montant:23, type:"Abonnements"},
-      {id:8, desc:"Assurance voiture", montant:41, type:"Fixes"},
-      {id:9, desc:"Assurance maison", montant:45, type:"Fixes"},
-      {id:10, desc:"Deezer", montant:20, type:"Abonnements"},
-      {id:11, desc:"Appel", montant:1, type:"Abonnements"},
-      {id:12, desc:"Amazon", montant:7, type:"Abonnements"},
-      {id:13, desc:"Internet", montant:53, type:"Abonnements"},
-      {id:14, desc:"Mutuelle", montant:37, type:"Fixes"},
-      {id:15, desc:"Impôts fonciers", montant:87, type:"Fixes"}
-    ],
+    fixes:[],
     operations:[],
     categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
   };
