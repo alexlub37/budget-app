@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Budget Alexandre V5</title>
+<title>Budget Alexandre V5.1</title>
 <style>
 :root{
   --bg:#f5f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
@@ -316,6 +316,18 @@ function updateFixesNow(){
   renderAll();
 }
 
+function updateFixed(id, field, value){
+  const f = data.fixes.find(x => x.id === id);
+  if(!f) return;
+  if(field === 'montant'){
+    const num = parseFloat(String(value || 0).replace(',', '.'));
+    f[field] = isNaN(num) ? 0 : num;
+  } else {
+    f[field] = value;
+  }
+  saveData();
+}
+
 function deleteFixed(id){
   data.fixes = data.fixes.filter(f => f.id !== id);
   saveData();
@@ -358,15 +370,23 @@ function renderFixed(){
   const t = totals();
   document.getElementById("fixesTotalFixed").textContent = euro(t.fixes);
   document.getElementById("fixedList").innerHTML = data.fixes.map(f => `
-    <div class="row">
-      <div>
-        <div>${f.desc}</div>
-        <div class="small">${f.type}</div>
+    <div class="card" style="box-shadow:none;border:1px dashed #e5e7eb;padding:14px;margin-bottom:12px">
+      <div class="field">
+        <label>Libellé</label>
+        <input class="input" value="${f.desc}" onchange="updateFixed(${f.id}, 'desc', this.value)">
       </div>
-      <div>
-        <span class="amount bad">${euro(f.montant)}</span><br>
-        <button class="btn btn-danger" style="margin-top:8px" onclick="deleteFixed(${f.id})">Supprimer</button>
+      <div class="field">
+        <label>Montant (€)</label>
+        <input class="input" type="number" step="0.01" value="${f.montant}" onchange="updateFixed(${f.id}, 'montant', this.value)">
       </div>
+      <div class="field">
+        <label>Type</label>
+        <select onchange="updateFixed(${f.id}, 'type', this.value)">
+          <option ${f.type==='Fixes'?'selected':''}>Fixes</option>
+          <option ${f.type==='Abonnements'?'selected':''}>Abonnements</option>
+        </select>
+      </div>
+      <button class="btn btn-danger" style="margin-top:8px" onclick="deleteFixed(${f.id})">Supprimer</button>
     </div>
   `).join("") || `<div class="small">Aucun fixe.</div>`;
 }
