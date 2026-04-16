@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Alexandre V4.7</title>
+<style>
+body{font-family:Arial;background:#f5f7fb;margin:0;padding:10px}
+.card{background:#fff;border-radius:12px;padding:15px;margin-bottom:10px}
+.big{font-size:32px;font-weight:bold;color:#2e7d32}
+.btn{background:#2d6cdf;color:#fff;padding:10px;border-radius:10px;text-align:center;margin:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px;border-top:1px solid #ccc}
+</style>
+</head>
+<body>
+
+<h2>Accueil</h2>
+
+<div class="card">
+<div>Argent restant</div>
+<div class="big" id="reste">0 €</div>
+</div>
+
+<div class="card grid">
+<div>Variables</div>
+<div id="var">0 €</div>
+</div>
+
+<div class="card">
+<div>Ajout rapide</div>
+<div class="grid">
+<div class="btn" onclick="add(20,'Courses')">Courses</div>
+<div class="btn" onclick="add(10,'Boulangerie')">Boulangerie</div>
+<div class="btn" onclick="add(5,'Snack')">Snack</div>
+<div class="btn" onclick="add(50,'Carburant')">Carburant</div>
+<div class="btn" onclick="add(30,'Santé')">Santé</div>
+<div class="btn" onclick="add(100,'Virement')">Virement</div>
+</div>
+</div>
+
+<hr>
+
+<h2>Gestion</h2>
+
+<div class="card">
+<div>Salaire : <span id="salaire">0</span> €</div>
+<div>Épargne : <span id="epargne">0</span> €</div>
+<div>Sécurité : <span id="secu">0</span> €</div>
+</div>
+
+<div class="card">
+<div>Budget du mois : <span id="budget">0</span> €</div>
+<div>Fixes : <span id="fixes">0</span> €</div>
+<div>Variables : <span id="variables">0</span> €</div>
+</div>
+
+<div class="nav">
+<div>Accueil</div>
+<div>Ajouter</div>
+<div>Fixes</div>
+<div>Vue</div>
+<div>Résumé</div>
+</div>
+
+<script>
+let salaire=3000
+let epargne=600
+let secu=600
+let fixes=1025
+let variables=0
+let revenus=200
+
+function calc(){
+let budget=salaire-epargne-secu
+let reste=budget-fixes-variables+revenus
+document.getElementById("reste").innerText=reste+" €"
+document.getElementById("budget").innerText=budget
+document.getElementById("variables").innerText=variables
+document.getElementById("fixes").innerText=fixes
+document.getElementById("salaire").innerText=salaire
+document.getElementById("epargne").innerText=epargne
+document.getElementById("secu").innerText=secu
+document.getElementById("var").innerText=variables+" €"
+}
+
+function add(montant){
+variables+=montant
+calc()
+}
+
+calc()
+</script>
+
+</body>
+</html>
