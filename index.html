@@ -2,108 +2,362 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budget Alexandre V4.7.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Budget Alexandre V4.7.4</title>
 <style>
-body{font-family:Arial;background:#f5f7fb;margin:0;padding:12px 12px 90px}
-.card{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px}
-.big{font-size:48px;font-weight:800}
-.btn{background:#dbeafe;padding:14px;border-radius:14px;text-align:center;font-weight:700}
+:root{
+  --bg:#f5f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#15803d; --red:#c62828; --orange:#b45309;
+}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:12px 12px 92px;color:var(--text)}
+h2{font-size:28px;margin:10px 0 14px}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.big{font-size:48px;font-weight:800;line-height:1}
+.btn{background:var(--blue-soft);color:#1d4ed8;padding:14px;border-radius:14px;text-align:center;font-weight:700;border:none;cursor:pointer;width:100%}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-danger{background:#fee2e2;color:#b91c1c}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px;border-top:1px solid #ccc}
+.field{margin-bottom:12px}
+label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
+.input, select{width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:14px;font-size:20px;background:#fff}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 4px;border-top:1px solid #ccc}
+.nav button{flex:1;background:#fff;border:none;color:#6b7280;font-size:16px;padding:8px 2px}
+.nav button.active{color:var(--blue);font-weight:800}
 .section{display:none}
 .section.active{display:block}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
+.row:last-child{border-bottom:none}
+.amount{font-size:22px;font-weight:800}
+.good{color:var(--green)} .bad{color:var(--red)} .warn{color:var(--orange)}
+.small{color:var(--muted);font-size:15px}
 </style>
 </head>
 <body>
 
 <div id="home" class="section active">
-<h2>Accueil</h2>
+  <h2>Accueil</h2>
 
-<div class="card">
-<div>Argent restant</div>
-<div class="big" id="reste">0 €</div>
+  <div class="card">
+    <div class="small">Argent restant</div>
+    <div class="big" id="reste">0 €</div>
+  </div>
+
+  <div class="card">
+    <div class="grid">
+      <button class="btn" onclick="quickAdd('Courses','Courses')">Courses</button>
+      <button class="btn" onclick="quickAdd('Boulangerie','Boulangerie')">Boulangerie</button>
+      <button class="btn" onclick="quickAdd('Snack','Snack')">Snack</button>
+      <button class="btn" onclick="quickAdd('Carburant','Carburant')">Carburant</button>
+      <button class="btn" onclick="quickAdd('Santé','Santé')">Santé</button>
+      <button class="btn" onclick="quickAdd('Virement','Virement')">Virement</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row"><div>Salaire</div><div class="amount good" id="salaireHome">0 €</div></div>
+    <div class="row"><div>Épargne</div><div class="amount" id="epargneHome">0 €</div></div>
+    <div class="row"><div>Sécurité</div><div class="amount" id="secuHome">0 €</div></div>
+    <div class="row"><div>Budget du mois</div><div class="amount" id="budgetHome">0 €</div></div>
+    <div class="row"><div>Fixes</div><div class="amount bad" id="fixesHome">0 €</div></div>
+    <div class="row"><div>Variables</div><div class="amount warn" id="variablesHome">0 €</div></div>
+    <div class="row"><div>Revenus</div><div class="amount good" id="revenusHome">0 €</div></div>
+  </div>
 </div>
 
-<div class="card">
-<div class="grid">
-<div class="btn" onclick="quickAdd('Courses')">Courses</div>
-<div class="btn" onclick="quickAdd('Boulangerie')">Boulangerie</div>
-<div class="btn" onclick="quickAdd('Snack')">Snack</div>
-<div class="btn" onclick="quickAdd('Carburant')">Carburant</div>
-<div class="btn" onclick="quickAdd('Santé')">Santé</div>
-<div class="btn" onclick="quickAdd('Virement')">Virement</div>
-</div>
+<div id="add" class="section">
+  <h2>Ajouter</h2>
+  <div class="card">
+    <div class="field">
+      <label>Description</label>
+      <input class="input" id="addDesc" placeholder="Ex : Carrefour">
+    </div>
+    <div class="field">
+      <label>Montant (€)</label>
+      <input class="input" id="addAmount" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="addType">
+        <option>Dépense</option>
+        <option>Revenu</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Catégorie</label>
+      <select id="addCategory">
+        <option>Courses</option>
+        <option>Boulangerie</option>
+        <option>Snack</option>
+        <option>Carburant</option>
+        <option>Santé</option>
+        <option>Virement</option>
+        <option>Divers</option>
+        <option>Revenus</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="saveEntry()">Enregistrer</button>
+  </div>
 </div>
 
-<div class="card">
-<div>Salaire : <span id="salaire"></span> €</div>
-<div>Épargne : <span id="epargne"></span> €</div>
-<div>Sécurité : <span id="secu"></span> €</div>
-<div>Budget : <span id="budget"></span> €</div>
-<div>Fixes : <span id="fixes"></span> €</div>
-<div>Variables : <span id="variables"></span> €</div>
-<div>Revenus : <span id="revenus"></span> €</div>
+<div id="fixed" class="section">
+  <h2>Fixes</h2>
+  <div class="card">
+    <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalFixed">0 €</div></div>
+    <div class="field">
+      <label>Libellé</label>
+      <input class="input" id="fixedDesc" placeholder="Ex : Netflix">
+    </div>
+    <div class="field">
+      <label>Montant (€)</label>
+      <input class="input" id="fixedAmount" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <button class="btn btn-primary" onclick="saveFixed()">Ajouter</button>
+  </div>
+  <div class="card" id="fixedList"></div>
 </div>
 
+<div id="view" class="section">
+  <h2>Vue fixes</h2>
+  <div class="card">
+    <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalView">0 €</div></div>
+    <div id="fixesViewList"></div>
+  </div>
 </div>
 
-<div id="summary" class="section">
-<h2>Gestion</h2>
-<div class="card">
-<input id="inputSalaire" placeholder="Salaire"><br><br>
-<input id="inputEpargne" placeholder="Epargne"><br><br>
-<input id="inputSecu" placeholder="Sécurité"><br><br>
-<button onclick="save()">Enregistrer</button>
-</div>
+<div id="gestion" class="section">
+  <h2>Gestion</h2>
+  <div class="card">
+    <div class="field">
+      <label>Salaire</label>
+      <input class="input" id="inputSalaire" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Épargne</label>
+      <input class="input" id="inputEpargne" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Sécurité</label>
+      <input class="input" id="inputSecu" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Opérations du mois</div>
+    <div id="opsList"></div>
+  </div>
 </div>
 
 <div class="nav">
-<button onclick="show('home')">Accueil</button>
-<button onclick="show('summary')">Gestion</button>
+  <button data-tab="home" onclick="showTab('home')">Accueil</button>
+  <button data-tab="add" onclick="showTab('add')">Ajouter</button>
+  <button data-tab="fixed" onclick="showTab('fixed')">Fixes</button>
+  <button data-tab="view" onclick="showTab('view')">Vue fixes</button>
+  <button data-tab="gestion" onclick="showTab('gestion')">Gestion</button>
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem('budget')) || {
-salaire:3000,epargne:600,secu:600,fixes:1000,variables:0,revenus:0
+const KEY = "budget_v474";
+
+function defaultData(){
+  return {
+    tab:"home",
+    salaire:3000,
+    epargne:600,
+    secu:600,
+    fixes:[
+      {id:1, desc:"Loyer / crédit", montant:500},
+      {id:2, desc:"EDF", montant:100},
+      {id:3, desc:"Tel Alex", montant:20},
+      {id:4, desc:"Tel Noam", montant:20},
+      {id:5, desc:"Assurance prêt", montant:28},
+      {id:6, desc:"Frais banque", montant:9},
+      {id:7, desc:"ChatGPT", montant:23},
+      {id:8, desc:"Assurance voiture", montant:41},
+      {id:9, desc:"Assurance maison", montant:45},
+      {id:10, desc:"Deezer", montant:20},
+      {id:11, desc:"Appel", montant:1},
+      {id:12, desc:"Amazon", montant:7},
+      {id:13, desc:"Internet", montant:53},
+      {id:14, desc:"Mutuelle", montant:37},
+      {id:15, desc:"Impôts fonciers", montant:87}
+    ],
+    operations:[]
+  };
 }
 
-function calc(){
-let budget = data.salaire - data.epargne - data.secu
-let reste = budget - data.fixes - data.variables + data.revenus
+function loadData(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return defaultData();
+    return {...defaultData(), ...JSON.parse(raw)};
+  }catch(e){
+    return defaultData();
+  }
+}
+let data = loadData();
 
-document.getElementById('reste').innerText = reste + " €"
-document.getElementById('salaire').innerText = data.salaire
-document.getElementById('epargne').innerText = data.epargne
-document.getElementById('secu').innerText = data.secu
-document.getElementById('budget').innerText = budget
-document.getElementById('fixes').innerText = data.fixes
-document.getElementById('variables').innerText = data.variables
-document.getElementById('revenus').innerText = data.revenus
+function saveData(){
+  localStorage.setItem(KEY, JSON.stringify(data));
+  renderAll();
 }
 
-function quickAdd(label){
-let val = prompt("Montant ?");
-if(!val) return;
-data.variables += parseFloat(val)
-save()
+function euro(n){
+  return Number(n||0).toLocaleString('fr-FR',{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
 }
 
-function save(){
-data.salaire = parseFloat(document.getElementById('inputSalaire').value) || data.salaire
-data.epargne = parseFloat(document.getElementById('inputEpargne').value) || data.epargne
-data.secu = parseFloat(document.getElementById('inputSecu').value) || data.secu
-localStorage.setItem('budget', JSON.stringify(data))
-calc()
+function totals(){
+  const fixes = data.fixes.reduce((t,f)=>t+Number(f.montant||0),0);
+  const variables = data.operations.filter(o=>o.type==="Dépense").reduce((t,o)=>t+Number(o.montant||0),0);
+  const revenus = data.operations.filter(o=>o.type==="Revenu").reduce((t,o)=>t+Number(o.montant||0),0);
+  const budget = Number(data.salaire||0) - Number(data.epargne||0) - Number(data.secu||0);
+  const reste = budget - fixes - variables + revenus;
+  return {fixes, variables, revenus, budget, reste};
 }
 
-function show(tab){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'))
-document.getElementById(tab).classList.add('active')
+function showTab(tab){
+  data.tab = tab;
+  saveData();
 }
 
-calc()
+function quickAdd(label, category){
+  const raw = prompt("Montant pour " + label + " ?");
+  if(raw === null) return;
+  const amount = parseFloat(String(raw).replace(",", "."));
+  if(isNaN(amount) || amount <= 0){
+    alert("Montant invalide.");
+    return;
+  }
+  data.operations.unshift({
+    id: Date.now() + Math.random(),
+    desc: label,
+    montant: amount,
+    type: "Dépense",
+    category: category
+  });
+  saveData();
+}
+
+function saveEntry(){
+  const desc = (document.getElementById("addDesc").value || "").trim();
+  const amount = parseFloat(String(document.getElementById("addAmount").value || "").replace(",", "."));
+  const type = document.getElementById("addType").value;
+  const category = document.getElementById("addCategory").value;
+  if(!desc || isNaN(amount) || amount <= 0){
+    alert("Renseigne une description et un montant valide.");
+    return;
+  }
+  data.operations.unshift({
+    id: Date.now() + Math.random(),
+    desc, montant: amount, type, category
+  });
+  document.getElementById("addDesc").value = "";
+  document.getElementById("addAmount").value = "";
+  saveData();
+}
+
+function saveFixed(){
+  const desc = (document.getElementById("fixedDesc").value || "").trim();
+  const amount = parseFloat(String(document.getElementById("fixedAmount").value || "").replace(",", "."));
+  if(!desc || isNaN(amount) || amount <= 0){
+    alert("Renseigne un libellé et un montant valide.");
+    return;
+  }
+  data.fixes.push({
+    id: Date.now() + Math.random(),
+    desc, montant: amount
+  });
+  document.getElementById("fixedDesc").value = "";
+  document.getElementById("fixedAmount").value = "";
+  saveData();
+}
+
+function deleteFixed(id){
+  data.fixes = data.fixes.filter(f => f.id !== id);
+  saveData();
+}
+
+function deleteOp(id){
+  data.operations = data.operations.filter(o => o.id !== id);
+  saveData();
+}
+
+function saveSettings(){
+  data.salaire = parseFloat(String(document.getElementById("inputSalaire").value || data.salaire).replace(",", ".")) || data.salaire;
+  data.epargne = parseFloat(String(document.getElementById("inputEpargne").value || data.epargne).replace(",", ".")) || data.epargne;
+  data.secu = parseFloat(String(document.getElementById("inputSecu").value || data.secu).replace(",", ".")) || data.secu;
+  saveData();
+}
+
+function renderHome(){
+  const t = totals();
+  document.getElementById("reste").textContent = euro(t.reste);
+  document.getElementById("reste").className = "big " + (t.reste>=300?"good":t.reste>=0?"warn":"bad");
+  document.getElementById("salaireHome").textContent = euro(data.salaire);
+  document.getElementById("epargneHome").textContent = euro(data.epargne);
+  document.getElementById("secuHome").textContent = euro(data.secu);
+  document.getElementById("budgetHome").textContent = euro(t.budget);
+  document.getElementById("fixesHome").textContent = euro(t.fixes);
+  document.getElementById("variablesHome").textContent = euro(t.variables);
+  document.getElementById("revenusHome").textContent = euro(t.revenus);
+}
+
+function renderFixed(){
+  const t = totals();
+  document.getElementById("fixesTotalFixed").textContent = euro(t.fixes);
+  document.getElementById("fixedList").innerHTML = data.fixes.map(f => `
+    <div class="row">
+      <div>${f.desc}</div>
+      <div>
+        <span class="amount bad">${euro(f.montant)}</span><br>
+        <button class="btn btn-danger" style="margin-top:8px" onclick="deleteFixed(${f.id})">Supprimer</button>
+      </div>
+    </div>
+  `).join("") || `<div class="small">Aucun fixe.</div>`;
+}
+
+function renderView(){
+  const t = totals();
+  document.getElementById("fixesTotalView").textContent = euro(t.fixes);
+  document.getElementById("fixesViewList").innerHTML = data.fixes.map(f => `
+    <div class="row">
+      <div>${f.desc}</div>
+      <div class="amount bad">${euro(f.montant)}</div>
+    </div>
+  `).join("") || `<div class="small">Aucun fixe.</div>`;
+}
+
+function renderGestion(){
+  const t = totals();
+  document.getElementById("inputSalaire").value = data.salaire;
+  document.getElementById("inputEpargne").value = data.epargne;
+  document.getElementById("inputSecu").value = data.secu;
+  document.getElementById("opsList").innerHTML = data.operations.map(o => `
+    <div class="row">
+      <div>
+        <div>${o.desc}</div>
+        <div class="small">${o.type} • ${o.category}</div>
+      </div>
+      <div>
+        <div class="amount ${o.type==='Revenu'?'good':'bad'}">${euro(o.montant)}</div>
+        <button class="btn btn-danger" style="margin-top:8px" onclick="deleteOp(${o.id})">Supprimer</button>
+      </div>
+    </div>
+  `).join("") || `<div class="small">Aucune opération.</div>`;
+}
+
+function renderAll(){
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(data.tab || "home").classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === (data.tab || "home")));
+  renderHome();
+  renderFixed();
+  renderView();
+  renderGestion();
+}
+
+renderAll();
 </script>
-
 </body>
 </html>
