@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Budget Alexandre V4.7</title>
+<title>Budget Alexandre V4.7.3</title>
 <style>
-body{font-family:Arial;background:#f5f7fb;margin:0;padding:10px}
-.card{background:#fff;border-radius:12px;padding:15px;margin-bottom:10px}
-.big{font-size:32px;font-weight:bold;color:#2e7d32}
-.btn{background:#2d6cdf;color:#fff;padding:10px;border-radius:10px;text-align:center;margin:5px}
+body{font-family:Arial;background:#f5f7fb;margin:0;padding:12px 12px 90px}
+.card{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px}
+.big{font-size:48px;font-weight:800}
+.btn{background:#dbeafe;padding:14px;border-radius:14px;text-align:center;font-weight:700}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px;border-top:1px solid #ccc}
+.section{display:none}
+.section.active{display:block}
 </style>
 </head>
 <body>
 
+<div id="home" class="section active">
 <h2>Accueil</h2>
 
 <div class="card">
@@ -22,71 +25,81 @@ body{font-family:Arial;background:#f5f7fb;margin:0;padding:10px}
 <div class="big" id="reste">0 €</div>
 </div>
 
-<div class="card grid">
-<div>Variables</div>
-<div id="var">0 €</div>
-</div>
-
 <div class="card">
-<div>Ajout rapide</div>
 <div class="grid">
-<div class="btn" onclick="add(20,'Courses')">Courses</div>
-<div class="btn" onclick="add(10,'Boulangerie')">Boulangerie</div>
-<div class="btn" onclick="add(5,'Snack')">Snack</div>
-<div class="btn" onclick="add(50,'Carburant')">Carburant</div>
-<div class="btn" onclick="add(30,'Santé')">Santé</div>
-<div class="btn" onclick="add(100,'Virement')">Virement</div>
+<div class="btn" onclick="quickAdd('Courses')">Courses</div>
+<div class="btn" onclick="quickAdd('Boulangerie')">Boulangerie</div>
+<div class="btn" onclick="quickAdd('Snack')">Snack</div>
+<div class="btn" onclick="quickAdd('Carburant')">Carburant</div>
+<div class="btn" onclick="quickAdd('Santé')">Santé</div>
+<div class="btn" onclick="quickAdd('Virement')">Virement</div>
 </div>
 </div>
 
-<hr>
+<div class="card">
+<div>Salaire : <span id="salaire"></span> €</div>
+<div>Épargne : <span id="epargne"></span> €</div>
+<div>Sécurité : <span id="secu"></span> €</div>
+<div>Budget : <span id="budget"></span> €</div>
+<div>Fixes : <span id="fixes"></span> €</div>
+<div>Variables : <span id="variables"></span> €</div>
+<div>Revenus : <span id="revenus"></span> €</div>
+</div>
 
+</div>
+
+<div id="summary" class="section">
 <h2>Gestion</h2>
-
 <div class="card">
-<div>Salaire : <span id="salaire">0</span> €</div>
-<div>Épargne : <span id="epargne">0</span> €</div>
-<div>Sécurité : <span id="secu">0</span> €</div>
+<input id="inputSalaire" placeholder="Salaire"><br><br>
+<input id="inputEpargne" placeholder="Epargne"><br><br>
+<input id="inputSecu" placeholder="Sécurité"><br><br>
+<button onclick="save()">Enregistrer</button>
 </div>
-
-<div class="card">
-<div>Budget du mois : <span id="budget">0</span> €</div>
-<div>Fixes : <span id="fixes">0</span> €</div>
-<div>Variables : <span id="variables">0</span> €</div>
 </div>
 
 <div class="nav">
-<div>Accueil</div>
-<div>Ajouter</div>
-<div>Fixes</div>
-<div>Vue</div>
-<div>Résumé</div>
+<button onclick="show('home')">Accueil</button>
+<button onclick="show('summary')">Gestion</button>
 </div>
 
 <script>
-let salaire=3000
-let epargne=600
-let secu=600
-let fixes=1025
-let variables=0
-let revenus=200
-
-function calc(){
-let budget=salaire-epargne-secu
-let reste=budget-fixes-variables+revenus
-document.getElementById("reste").innerText=reste+" €"
-document.getElementById("budget").innerText=budget
-document.getElementById("variables").innerText=variables
-document.getElementById("fixes").innerText=fixes
-document.getElementById("salaire").innerText=salaire
-document.getElementById("epargne").innerText=epargne
-document.getElementById("secu").innerText=secu
-document.getElementById("var").innerText=variables+" €"
+let data = JSON.parse(localStorage.getItem('budget')) || {
+salaire:3000,epargne:600,secu:600,fixes:1000,variables:0,revenus:0
 }
 
-function add(montant){
-variables+=montant
+function calc(){
+let budget = data.salaire - data.epargne - data.secu
+let reste = budget - data.fixes - data.variables + data.revenus
+
+document.getElementById('reste').innerText = reste + " €"
+document.getElementById('salaire').innerText = data.salaire
+document.getElementById('epargne').innerText = data.epargne
+document.getElementById('secu').innerText = data.secu
+document.getElementById('budget').innerText = budget
+document.getElementById('fixes').innerText = data.fixes
+document.getElementById('variables').innerText = data.variables
+document.getElementById('revenus').innerText = data.revenus
+}
+
+function quickAdd(label){
+let val = prompt("Montant ?");
+if(!val) return;
+data.variables += parseFloat(val)
+save()
+}
+
+function save(){
+data.salaire = parseFloat(document.getElementById('inputSalaire').value) || data.salaire
+data.epargne = parseFloat(document.getElementById('inputEpargne').value) || data.epargne
+data.secu = parseFloat(document.getElementById('inputSecu').value) || data.secu
+localStorage.setItem('budget', JSON.stringify(data))
 calc()
+}
+
+function show(tab){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'))
+document.getElementById(tab).classList.add('active')
 }
 
 calc()
