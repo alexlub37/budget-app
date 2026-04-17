@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.3</title>
+<title>YoNo Budget V6.3.1</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -219,7 +219,7 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 </div>
 
 <script>
-const KEY = "yono_budget_v63";
+const KEY = "yono_budget_v631";
 
 function defaultData(){
   return {
@@ -273,7 +273,6 @@ function totals(){
 function showTab(tab){
   data.tab = tab;
   saveData();
-  showToast('Réglages enregistrés');
 }
 
 let quickType = "Dépense";
@@ -342,8 +341,8 @@ function saveEntry(){
   const type = document.getElementById("addType").value;
   const selectedCategory = document.getElementById("addCategory").value;
   const newCategory = (document.getElementById("newCategoryInput").value || "").trim();
-  let category = selectedCategory;
 
+  let category = selectedCategory;
   if(newCategory){
     if(!data.categories.includes(newCategory)){
       data.categories.push(newCategory);
@@ -355,15 +354,16 @@ function saveEntry(){
     alert("Renseigne une description et un montant valide.");
     return;
   }
+
   data.operations.unshift({
     id: Date.now() + Math.random(),
     desc, montant: amount, type, category
   });
+
   document.getElementById("addDesc").value = "";
   document.getElementById("addAmount").value = "";
   document.getElementById("newCategoryInput").value = "";
   saveData();
-  showToast((type === "Revenu" ? "Revenu ajouté : " : "Dépense ajoutée : ") + desc);
 }
 
 function saveFixed(){
@@ -381,7 +381,6 @@ function saveFixed(){
   document.getElementById("fixedDesc").value = "";
   document.getElementById("fixedAmount").value = "";
   saveData();
-  showToast('Fixe ajouté');
 }
 
 function updateFixesNow(){
@@ -525,17 +524,24 @@ function newMonth(){
   if(confirm("Démarrer un nouveau mois ? Les opérations seront supprimées.")){
     data.operations = [];
     saveData();
-    showToast('Nouveau mois prêt');
   }
 }
-}
 
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+}
 
 function exportBackup(){
   const payload = {
     exportedAt: new Date().toISOString(),
     app: "YoNo Budget",
-    version: "V6.3",
+    version: "V6.3.1",
     data: data
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
@@ -591,6 +597,15 @@ function renderAll(){
 }
 
 renderAll();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
+      console.log('Service Worker non installé :', err);
+    });
+  });
+}
 </script>
 </body>
 </html>

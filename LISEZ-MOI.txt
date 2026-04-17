@@ -1,25 +1,24 @@
-YoNo Budget V6.3 - pack complet propre
+YoNo Budget V6.3.1
 
-Cette version repart proprement :
+Base propre et simple :
 - app vide au départ
 - logo inclus
 - sauvegarde / restauration incluses
+- onglets fonctionnels
 - catégories personnalisables
 - fixes modifiables
 - vue fixes
 - résumé
 - nouveau mois
+- service worker inclus
 
-Important :
-- Comme c'est une base propre, tu peux saisir tes fixes une bonne fois
-- Ensuite utilise 'Sauvegarder mes données' dans Résumé
-- Tu pourras les remettre plus tard avec 'Restaurer mes données'
-
-Installation / mise à jour :
+À faire :
 1. Extraire ce zip
 2. Add file > Upload files sur GitHub
 3. Envoyer tous les fichiers
 4. Remplacer les anciens
 5. Commit changes
 6. Ouvrir le lien dans Safari
-7. Si l'icône ne change pas, supprimer l'app puis la remettre à l'écran d'accueil
+7. Vérifier les onglets
+8. Saisir tes fixes
+9. Aller dans Résumé > Sauvegarder mes données
