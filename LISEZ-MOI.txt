@@ -1,14 +1,13 @@
-YoNo Budget V6.6.1
+YoNo Budget V6.6.2
 
-Correction :
-- le formulaire rapide (Description / Montant / Catégorie / Valider / Annuler)
-  est de nouveau caché correctement
-- il ne s'affiche plus sur tous les onglets
-- il s'ouvre seulement quand on clique sur un bouton rapide de l'accueil
+Correction ergonomie :
+- plus d'espace en bas des pages
+- le contenu ne passe plus sous la barre d'onglets
+- scroll plus confortable
+- montants mieux tenus sur une ligne
 
-Le reste est inchangé :
-- même base V6.5
-- même design V6.6
+Base conservée :
+- même structure que la version qui fonctionnait
+- même logique
 - mêmes sauvegardes
-- mêmes onglets
-- même logique projet
+- même design V6.6
