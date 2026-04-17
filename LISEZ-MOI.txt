@@ -1,27 +1,16 @@
-YoNo Budget V6.4
+YoNo Budget V6.4.1
 
-Ajout principal :
-- boutons rapides personnalisables (jusqu'à 8)
-- chaque bouton garde :
-  - son nom
-  - sa catégorie
-  - son type (Dépense ou Revenu)
-- quand tu cliques sur un bouton, tu saisis toujours le montant manuellement
+Corrections :
+- bouton Supprimer visible pour les boutons rapides
+- choix de la catégorie visible
+- type Dépense / Revenu visible
+- jusqu’à 8 boutons rapides
 
-Le reste est conservé :
-- sauvegarde / restauration
-- nouveau mois
-- fixes modifiables
-- vue fixes
-- résumé
-- logo
-- offline
-
-Mise à jour :
+Procédure :
 1. Extraire le zip
 2. Upload files sur GitHub
 3. Remplacer les anciens
 4. Commit changes
-5. Ouvrir Safari puis ton lien
-6. Tester les onglets
-7. Si besoin, Restaurer mes données dans Résumé
+5. Ouvrir dans Safari
+6. Restaurer les données si besoin
+7. Configurer les boutons rapides dans Résumé
