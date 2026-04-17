@@ -2,48 +2,879 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YoNo Budget</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>YoNo Budget V6.6.7</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#22c55e">
 <style>
+:root{
+  --bg:#f3f6fb;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --blue:#2563eb;
+  --blue-soft:#e0ecff;
+  --green:#16a34a;
+  --green-soft:#dcfce7;
+  --red:#dc2626;
+  --red-soft:#fee2e2;
+  --orange:#d97706;
+  --shadow:0 10px 30px rgba(15,23,42,.08);
+  --shadow-soft:0 4px 14px rgba(15,23,42,.06);
+  --radius:20px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
 body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+  background:linear-gradient(180deg,#eef4ff 0%,#f7f9fc 20%,#f3f6fb 100%);
   margin:0;
-  font-family:Arial;
-  background:#f5f7fb;
   padding:12px 12px calc(210px + env(safe-area-inset-bottom));
+  color:var(--text);
+}
+h2{
+  font-size:30px;
+  margin:10px 2px 16px;
+  letter-spacing:-0.03em;
+}
+.card{
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(6px);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow-soft);
+  border:1px solid rgba(255,255,255,.8);
+}
+.big{
+  font-size:52px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-0.05em;
+}
+.btn{
+  background:var(--blue-soft);
+  color:#1d4ed8;
+  padding:15px 14px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  width:100%;
+  font-size:16px;
+  box-shadow:0 2px 8px rgba(37,99,235,.10);
+}
+.btn:active{transform:scale(.98)}
+.btn-primary{
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:#fff;
+}
+.btn-danger{
+  background:linear-gradient(135deg,#fee2e2,#fecaca);
+  color:#b91c1c;
+  box-shadow:none;
+}
+.btn-success{
+  background:linear-gradient(135deg,#dcfce7,#bbf7d0);
+  color:#166534;
+  box-shadow:none;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.field{margin-bottom:12px}
+label{
+  display:block;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:7px;
+  font-weight:700;
+}
+.input, select{
+  width:100%;
+  padding:15px 16px;
+  border:1px solid #dbe2ea;
+  border-radius:16px;
+  font-size:18px;
+  background:#fff;
+  color:var(--text);
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.03);
+}
+.input:focus, select:focus{
+  outline:none;
+  border-color:#93c5fd;
+  box-shadow:0 0 0 4px rgba(59,130,246,.12);
+}
+.nav{
+  position:fixed;
+  bottom:max(16px, env(safe-area-inset-bottom));
+  left:12px;
+  right:12px;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(12px);
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:4px;
+  padding:10px 8px;
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(255,255,255,.9);
+}
+.nav button{
+  background:transparent;
+  border:none;
+  color:#64748b;
+  font-size:11px;
+  font-weight:700;
+  padding:10px 4px 8px;
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  line-height:1.1;
+}
+.nav button.active{
+  color:var(--blue);
+  background:#eef4ff;
+}
+.section{display:none;padding-bottom:42px}
+.section.active{display:block}
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid #edf2f7;
+}
+.row:last-child{border-bottom:none}
+.amount{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-0.02em;
+  white-space:nowrap;
+  text-align:right;
+  flex-shrink:0;
+}
+.good{color:var(--green)}
+.bad{color:var(--red)}
+.warn{color:var(--orange)}
+.small{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+#home .card:first-of-type{
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 55%,#2563eb 100%);
+  color:#fff;
+  box-shadow:0 18px 40px rgba(37,99,235,.22);
+}
+#home .card:first-of-type .small{color:rgba(255,255,255,.78)}
+#home .card:first-of-type .big.good,
+#home .card:first-of-type .big.warn,
+#home .card:first-of-type .big.bad{color:#fff}
+#home .grid .btn{
+  background:#fff;
+  color:#0f172a;
+  border:1px solid #e8edf5;
+  box-shadow:var(--shadow-soft);
+}
+#home .grid .btn:nth-child(1){background:linear-gradient(135deg,#eff6ff,#ffffff)}
+#home .grid .btn:nth-child(2){background:linear-gradient(135deg,#f0fdf4,#ffffff)}
+#home .grid .btn:nth-child(3){background:linear-gradient(135deg,#fff7ed,#ffffff)}
+#home .grid .btn:nth-child(4){background:linear-gradient(135deg,#eef2ff,#ffffff)}
+#home .grid .btn:nth-child(5){background:linear-gradient(135deg,#fdf2f8,#ffffff)}
+#home .grid .btn:nth-child(6){background:linear-gradient(135deg,#ecfdf5,#ffffff)}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:102px;
+  transform:translateX(-50%);
+  background:#0f172a;
+  color:#fff;
+  padding:12px 16px;
+  border-radius:999px;
+  font-size:14px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:60
+}
+.toast.show{opacity:1}
+.quick-modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.quick-modal.show{display:flex}
+.quick-sheet{background:#fff;width:100%;max-width:900px;border-radius:24px 24px 0 0;padding:18px;box-shadow:0 -8px 24px rgba(15,23,42,.18)}
+@media (max-width: 390px){
+  .big{font-size:46px}
+  .nav button{font-size:10px}
+  .amount{font-size:18px}
+  .row{gap:8px}
 }
 
 .page-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:12px;
+  gap:12px;
+  margin:4px 2px 14px;
 }
-
-.page-header h2{
-  margin:0;
-}
-
+.page-header h2{margin:0}
 .header-logo{
-  height:38px;
+  height:48px;
+  width:auto;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(15,23,42,.08);
+  opacity:.98;
+}
+@media (max-width:390px){
+  .header-logo{height:42px}
 }
 
-.section{
-  margin-bottom:20px;
-}
 </style>
 </head>
-
 <body>
 
-<div class="page-header">
-  <h2>Accueil</h2>
-  <img src="logo-yono-budget.png" class="header-logo">
+<div id="home" class="section active">
+  <h2>🏠<span>Accueil</span></h2>
+
+  <div class="card">
+    <div class="small">Argent restant</div>
+    <div class="big" id="reste">0 €</div>
+  </div>
+
+  <div class="card">
+    <div class="grid">
+      <button class="btn" onclick="openQuickModal('Courses','Courses','Dépense')">Courses</button>
+      <button class="btn" onclick="openQuickModal('Boulangerie','Boulangerie','Dépense')">Boulangerie</button>
+      <button class="btn" onclick="openQuickModal('Snack','Snack','Dépense')">Snack</button>
+      <button class="btn" onclick="openQuickModal('Carburant','Carburant','Dépense')">Carburant</button>
+      <button class="btn" onclick="openQuickModal('Santé','Santé','Dépense')">Santé</button>
+      <button class="btn" onclick="openQuickModal('Revenu','Revenus','Revenu')">Revenu</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row"><div>Salaire</div><div class="amount good" id="salaireHome">0 €</div></div>
+    <div class="row"><div>Épargne</div><div class="amount" id="epargneHome">0 €</div></div>
+    <div class="row"><div>Sécurité</div><div class="amount" id="secuHome">0 €</div></div>
+    <div class="row"><div>Budget du mois</div><div class="amount" id="budgetHome">0 €</div></div>
+    <div class="row"><div>🧱<span>Fixes</span></div><div class="amount bad" id="fixesHome">0 €</div></div>
+    <div class="row"><div>Variables</div><div class="amount warn" id="variablesHome">0 €</div></div>
+    <div class="row"><div>Revenus</div><div class="amount good" id="revenusHome">0 €</div></div>
+  </div>
 </div>
 
-<div class="section">
-  <p>Test logo visible</p>
+<div id="add" class="section">
+  <h2>➕<span>Ajouter</span></h2>
+  <div class="card">
+    <div class="field">
+      <label>Description</label>
+      <input class="input" id="addDesc" placeholder="Ex : Carrefour">
+    </div>
+    <div class="field">
+      <label>Montant (€)</label>
+      <input class="input" id="addAmount" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="addType">
+        <option>Dépense</option>
+        <option>Revenu</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Catégorie</label>
+      <select id="addCategory"></select>
+    </div>
+    <div class="field">
+      <label>Nouvelle catégorie (option)</label>
+      <input class="input" id="newCategoryInput" placeholder="Ex : Chiens">
+    </div>
+    <button class="btn btn-primary" onclick="saveEntry()">Enregistrer</button>
+  </div>
 </div>
 
+<div id="fixed" class="section">
+  <h2>🧱<span>Fixes</span></h2>
+  <div class="card">
+    <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalFixed">0 €</div></div>
+    <div class="field">
+      <label>Libellé</label>
+      <input class="input" id="fixedDesc" placeholder="Ex : Netflix">
+    </div>
+    <div class="field">
+      <label>Montant (€)</label>
+      <input class="input" id="fixedAmount" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="fixedKind">
+        <option>🧱<span>Fixes</span></option>
+        <option>Abonnements</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="saveFixed()">➕<span>Ajouter</span></button>
+    <button class="btn btn-success" onclick="updateFixesNow()">Mettre à jour les fixes</button>
+    <div class="small">Le bouton met à jour l’affichage mensuel à partir de ta liste de fixes.</div>
+  </div>
+  <div class="card" id="fixedList"></div>
+</div>
+
+<div id="view" class="section">
+  <h2>👁<span>Vue</span></h2>
+  <div class="card">
+    <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalView">0 €</div></div>
+    <div id="fixesViewList"></div>
+  </div>
+</div>
+
+<div id="summary" class="section">
+  <h2>📊<span>Résumé</span></h2>
+  <div class="card">
+    <div class="field">
+      <label>Revenu fixe (€)</label>
+      <input class="input" id="inputSalaire" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>% Épargne</label>
+      <input class="input" id="inputPctEpargne" type="number" step="1" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label>% Sécurité</label>
+      <input class="input" id="inputPctSecu" type="number" step="1" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label>% Vie quotidienne</label>
+      <input class="input" id="inputPctVie" type="number" step="1" inputmode="numeric" disabled>
+    </div>
+    <div class="small" id="pctInfo"></div>
+    <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+    <button class="btn btn-danger" onclick="newMonth()">Nouveau mois</button>
+    <div class="small">Nouveau mois efface seulement les opérations du mois.</div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Répartition du départ</div>
+    <div class="row"><div>Salaire</div><div class="amount good" id="sumSalaire">0 €</div></div>
+    <div class="row"><div>Épargne</div><div class="amount" id="sumEpargne">0 €</div></div>
+    <div class="row"><div>Sécurité</div><div class="amount" id="sumSecu">0 €</div></div>
+    <div class="row"><div>Budget du mois</div><div class="amount" id="sumBudget">0 €</div></div>
+    <div class="row"><div>% Vie quotidienne</div><div class="amount" id="sumPctVie">0 %</div></div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Par catégorie</div>
+    <div id="catSummary"></div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Opérations du mois</div>
+    <div id="opsList"></div>
+  </div>
+</div>
+
+
+<div id="quickModal" class="quick-modal">
+  <div class="quick-sheet">
+    <div class="field">
+      <label>Description</label>
+      <input class="input" id="quickDescInput">
+    </div>
+    <div class="field">
+      <label>Montant (€)</label>
+      <input class="input" id="quickAmountInput" type="number" step="0.01" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Catégorie</label>
+      <select id="quickCategoryInput"></select>
+    </div>
+    <button class="btn btn-primary" onclick="confirmQuickAdd()">Valider</button>
+    <button class="btn btn-danger" onclick="closeQuickModal()">Annuler</button>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+
+<div id="backup" class="section">
+  <h2>💾<span>Sauv.</span></h2>
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
+    <button class="btn" onclick="saveFix()">Sauvegarder mes FIX</button>
+    <div class="small">Crée un fichier yono-fix.json avec tes fixes et tes catégories.</div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Sauvegarde du mois (option)</div>
+    <button class="btn" onclick="saveMonth()">Sauvegarder ce MOIS</button>
+    <div class="small">Crée un fichier yono-mois-AAAA-MM.json avec tes fixes, tes opérations, tes catégories et tes réglages.</div>
+  </div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:8px">Restauration</div>
+    <div class="field">
+      <label>Restaurer une sauvegarde (.json)</label>
+      <input class="input" id="restoreFileBackup" type="file" accept=".json,application/json" onchange="importBackup(event)">
+    </div>
+    <div class="small">Compatible avec yono-fix.json, yono-mois-AAAA-MM.json et tes anciennes sauvegardes complètes.</div>
+  </div>
+</div>
+
+<div style="height:170px" aria-hidden="true"></div>
+<div class="nav">
+  <button data-tab="home" onclick="showTab('home')">🏠<span>Accueil</span></button>
+  <button data-tab="add" onclick="showTab('add')">➕<span>Ajouter</span></button>
+  <button data-tab="fixed" onclick="showTab('fixed')">🧱<span>Fixes</span></button>
+  <button data-tab="view" onclick="showTab('view')">👁<span>Vue</span></button>
+  <button data-tab="summary" onclick="showTab('summary')">📊<span>Résumé</span></button>
+  <button data-tab="backup" onclick="showTab('backup')">💾<span>Sauv.</span></button>
+</div>
+
+<script>
+const KEY = "yono_budget_v631";
+
+function defaultData(){
+  return {
+    tab:"home",
+    salaire:0,
+    pctEpargne:20,
+    pctSecu:20,
+    fixes:[],
+    operations:[],
+    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
+  };
+}
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return defaultData();
+    const parsed = JSON.parse(raw);
+    const base = defaultData();
+    return {...base, ...parsed, categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories};
+  }catch(e){
+    return defaultData();
+  }
+}
+let data = loadData();
+
+function saveData(){
+  localStorage.setItem(KEY, JSON.stringify(data));
+  renderAll();
+}
+
+function euro(n){
+  return Number(n||0).toLocaleString('fr-FR',{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+}
+
+function totals(){
+  const fixes = data.fixes.reduce((t,f)=>t+Number(f.montant||0),0);
+  const variables = data.operations.filter(o=>o.type==="Dépense").reduce((t,o)=>t+Number(o.montant||0),0);
+  const revenus = data.operations.filter(o=>o.type==="Revenu").reduce((t,o)=>t+Number(o.montant||0),0);
+  const salaire = Number(data.salaire||0);
+  const pctEpargne = Number(data.pctEpargne||0);
+  const pctSecu = Number(data.pctSecu||0);
+  const epargne = salaire * pctEpargne / 100;
+  const secu = salaire * pctSecu / 100;
+  const pctVie = Math.max(0, 100 - pctEpargne - pctSecu);
+  const budget = salaire - epargne - secu;
+  const reste = budget - fixes - variables + revenus;
+  return {fixes, variables, revenus, budget, reste, salaire, epargne, secu, pctEpargne, pctSecu, pctVie};
+}
+
+function showTab(tab){
+  data.tab = tab;
+  saveData();
+}
+
+let quickType = "Dépense";
+
+function openQuickModal(label, category, type){
+  quickType = type || "Dépense";
+  document.getElementById("quickDescInput").value = label || "";
+  document.getElementById("quickAmountInput").value = "";
+  const sel = document.getElementById("quickCategoryInput");
+  const cats = (data.categories || ["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]).slice().sort((a,b)=>a.localeCompare(b,'fr'));
+  sel.innerHTML = cats.map(c => `<option ${c===category?'selected':''}>${c}</option>`).join("");
+  document.getElementById("quickModal").classList.add("show");
+  setTimeout(()=>document.getElementById("quickAmountInput").focus(), 50);
+}
+
+function closeQuickModal(){
+  document.getElementById("quickModal").classList.remove("show");
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+}
+
+function confirmQuickAdd(){
+  const label = (document.getElementById("quickDescInput").value || "").trim();
+  const raw = document.getElementById("quickAmountInput").value;
+  const amount = parseFloat(String(raw).replace(",", "."));
+  const category = document.getElementById("quickCategoryInput").value;
+  if(!label || isNaN(amount) || amount <= 0){
+    alert("Montant invalide.");
+    return;
+  }
+  data.operations.unshift({
+    id: Date.now() + Math.random(),
+    desc: label,
+    montant: amount,
+    type: quickType,
+    category: category
+  });
+  closeQuickModal();
+  saveData();
+  showToast((quickType === "Revenu" ? "Revenu ajouté : " : "Dépense ajoutée : ") + label + " " + euro(amount));
+}
+
+function fillCategorySelect(){
+  const sel = document.getElementById("addCategory");
+  if(!sel) return;
+  const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
+  sel.innerHTML = cats.map(c => `<option>${c}</option>`).join("");
+}
+
+function fillCategorySelect(id, selected){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
+  el.innerHTML = cats.map(c => `<option ${c===selected?'selected':''}>${c}</option>`).join("");
+}
+
+function saveEntry(){
+  const desc = (document.getElementById("addDesc").value || "").trim();
+  const amount = parseFloat(String(document.getElementById("addAmount").value || "").replace(",", "."));
+  const type = document.getElementById("addType").value;
+  const selectedCategory = document.getElementById("addCategory").value;
+  const newCategory = (document.getElementById("newCategoryInput").value || "").trim();
+
+  let category = selectedCategory;
+  if(newCategory){
+    if(!data.categories.includes(newCategory)){
+      data.categories.push(newCategory);
+    }
+    category = newCategory;
+  }
+
+  if(!desc || isNaN(amount) || amount <= 0){
+    alert("Renseigne une description et un montant valide.");
+    return;
+  }
+
+  data.operations.unshift({
+    id: Date.now() + Math.random(),
+    desc, montant: amount, type, category
+  });
+
+  document.getElementById("addDesc").value = "";
+  document.getElementById("addAmount").value = "";
+  document.getElementById("newCategoryInput").value = "";
+  saveData();
+}
+
+function saveFixed(){
+  const desc = (document.getElementById("fixedDesc").value || "").trim();
+  const amount = parseFloat(String(document.getElementById("fixedAmount").value || "").replace(",", "."));
+  const type = document.getElementById("fixedKind").value;
+  if(!desc || isNaN(amount) || amount <= 0){
+    alert("Renseigne un libellé et un montant valide.");
+    return;
+  }
+  data.fixes.push({
+    id: Date.now() + Math.random(),
+    desc, montant: amount, type
+  });
+  document.getElementById("fixedDesc").value = "";
+  document.getElementById("fixedAmount").value = "";
+  saveData();
+}
+
+function updateFixesNow(){
+  alert("Les fixes sont déjà pris en compte dans le calcul mensuel.");
+  renderAll();
+}
+
+function updateFixed(id, field, value){
+  const f = data.fixes.find(x => x.id === id);
+  if(!f) return;
+  if(field === 'montant'){
+    const num = parseFloat(String(value || 0).replace(',', '.'));
+    f[field] = isNaN(num) ? 0 : num;
+  } else {
+    f[field] = value;
+  }
+  saveData();
+}
+
+function deleteFixed(id){
+  data.fixes = data.fixes.filter(f => f.id !== id);
+  saveData();
+}
+
+function saveSettings(){
+  data.salaire = parseFloat(String(document.getElementById("inputSalaire").value || data.salaire).replace(",", ".")) || data.salaire;
+  data.pctEpargne = parseFloat(String(document.getElementById("inputPctEpargne").value || data.pctEpargne).replace(",", ".")) || 0;
+  data.pctSecu = parseFloat(String(document.getElementById("inputPctSecu").value || data.pctSecu).replace(",", ".")) || 0;
+  if(data.pctEpargne < 0) data.pctEpargne = 0;
+  if(data.pctSecu < 0) data.pctSecu = 0;
+  if(data.pctEpargne > 100) data.pctEpargne = 100;
+  if(data.pctSecu > 100) data.pctSecu = 100;
+  if(data.pctEpargne + data.pctSecu > 100){
+    alert("Le total Épargne + Sécurité ne peut pas dépasser 100%.");
+    return;
+  }
+  saveData();
+  showToast('Réglages enregistrés');
+}
+
+function deleteOp(id){
+  data.operations = data.operations.filter(o => o.id !== id);
+  saveData();
+}
+
+function renderHome(){
+  const t = totals();
+  document.getElementById("reste").textContent = euro(t.reste);
+  document.getElementById("reste").className = "big " + (t.reste>=300?"good":t.reste>=0?"warn":"bad");
+  document.getElementById("salaireHome").textContent = euro(t.salaire);
+  document.getElementById("epargneHome").textContent = euro(t.epargne);
+  document.getElementById("secuHome").textContent = euro(t.secu);
+  document.getElementById("budgetHome").textContent = euro(t.budget);
+  document.getElementById("fixesHome").textContent = euro(t.fixes);
+  document.getElementById("variablesHome").textContent = euro(t.variables);
+  document.getElementById("revenusHome").textContent = euro(t.revenus);
+}
+
+function renderAdd(){
+  fillCategorySelect();
+}
+
+function renderFixed(){
+  const t = totals();
+  document.getElementById("fixesTotalFixed").textContent = euro(t.fixes);
+  document.getElementById("fixedList").innerHTML = data.fixes.map(f => `
+    <div class="card" style="box-shadow:none;border:1px dashed #e5e7eb;padding:14px;margin-bottom:12px">
+      <div class="field">
+        <label>Libellé</label>
+        <input class="input" value="${f.desc}" onchange="updateFixed(${f.id}, 'desc', this.value)">
+      </div>
+      <div class="field">
+        <label>Montant (€)</label>
+        <input class="input" type="number" step="0.01" value="${f.montant}" onchange="updateFixed(${f.id}, 'montant', this.value)">
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select onchange="updateFixed(${f.id}, 'type', this.value)">
+          <option ${f.type==='Fixes'?'selected':''}>🧱<span>Fixes</span></option>
+          <option ${f.type==='Abonnements'?'selected':''}>Abonnements</option>
+        </select>
+      </div>
+      <button class="btn btn-danger" style="margin-top:8px" onclick="deleteFixed(${f.id})">Supprimer</button>
+    </div>
+  `).join("") || `<div class="small">Aucun fixe.</div>`;
+}
+
+function renderView(){
+  const t = totals();
+  document.getElementById("fixesTotalView").textContent = euro(t.fixes);
+  document.getElementById("fixesViewList").innerHTML = data.fixes.map(f => `
+    <div class="row">
+      <div>
+        <div>${f.desc}</div>
+        <div class="small">${f.type}</div>
+      </div>
+      <div class="amount bad">${euro(f.montant)}</div>
+    </div>
+  `).join("") || `<div class="small">Aucun fixe.</div>`;
+}
+
+function renderSummary(){
+  const t = totals();
+  document.getElementById("inputSalaire").value = t.salaire;
+  document.getElementById("inputPctEpargne").value = t.pctEpargne;
+  document.getElementById("inputPctSecu").value = t.pctSecu;
+  document.getElementById("inputPctVie").value = t.pctVie;
+  document.getElementById("pctInfo").textContent = "La vie quotidienne est calculée automatiquement : 100% - épargne - sécurité.";
+  document.getElementById("sumSalaire").textContent = euro(t.salaire);
+  document.getElementById("sumEpargne").textContent = euro(t.epargne);
+  document.getElementById("sumSecu").textContent = euro(t.secu);
+  document.getElementById("sumBudget").textContent = euro(t.budget);
+  document.getElementById("sumPctVie").textContent = t.pctVie + " %";
+
+  const byCat = {};
+  data.fixes.forEach(f => { byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant||0); });
+  data.operations.forEach(o => { byCat[o.category] = (byCat[o.category] || 0) + (o.type==="Revenu" ? Number(o.montant||0) : -Number(o.montant||0)); });
+
+  document.getElementById("catSummary").innerHTML = Object.keys(byCat).sort().map(cat => `
+    <div class="row">
+      <div>${cat}</div>
+      <div class="amount ${byCat[cat] >= 0 ? 'good' : 'bad'}">${euro(byCat[cat])}</div>
+    </div>
+  `).join("") || `<div class="small">Aucune donnée.</div>`;
+
+  document.getElementById("opsList").innerHTML = data.operations.map(o => `
+    <div class="row">
+      <div>
+        <div>${o.desc}</div>
+        <div class="small">${o.type} • ${o.category}</div>
+      </div>
+      <div>
+        <div class="amount ${o.type==='Revenu'?'good':'bad'}">${euro(o.montant)}</div>
+        <button class="btn btn-danger" style="margin-top:8px" onclick="deleteOp(${o.id})">Supprimer</button>
+      </div>
+    </div>
+  `).join("") || `<div class="small">Aucune opération.</div>`;
+}
+
+function newMonth(){
+  if(confirm("Démarrer un nouveau mois ? Les opérations seront supprimées.")){
+    data.operations = [];
+    saveData();
+  }
+}
+
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+}
+
+function saveFix(){
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    app: "YoNo Budget",
+    version: "V6.5",
+    kind: "fix",
+    fixes: Array.isArray(data.fixes) ? data.fixes : [],
+    categories: Array.isArray(data.categories) ? data.categories : []
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'yono-fix.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Sauvegarde FIX téléchargée');
+}
+
+function saveMonth(){
+  const d = new Date();
+  const ym = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    app: "YoNo Budget",
+    version: "V6.5",
+    kind: "month",
+    data: data
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'yono-mois-' + ym + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Sauvegarde MOIS téléchargée');
+}
+
+function importBackup(event){
+  const file = event && event.target && event.target.files && event.target.files[0];
+  if(!file){
+    alert('Aucun fichier sélectionné.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const rawText = e && e.target ? e.target.result : '';
+      const parsed = JSON.parse(rawText);
+      const base = defaultData();
+
+      // 1) fichier FIX dédié
+      if(parsed.kind === 'fix' || (Array.isArray(parsed.fixes) && !parsed.data)){
+        data = {
+          ...data,
+          fixes: Array.isArray(parsed.fixes) ? parsed.fixes : [],
+          categories: Array.isArray(parsed.categories) && parsed.categories.length ? parsed.categories : data.categories
+        };
+      } else {
+        // 2) sauvegarde complète ancienne ou mensuelle
+        const imported = parsed && parsed.data ? parsed.data : parsed;
+        data = {
+          ...base,
+          ...imported,
+          fixes: Array.isArray(imported.fixes) ? imported.fixes : [],
+          operations: Array.isArray(imported.operations) ? imported.operations : [],
+          categories: Array.isArray(imported.categories) && imported.categories.length ? imported.categories : base.categories
+        };
+      }
+
+      localStorage.setItem(KEY, JSON.stringify(data));
+      renderAll();
+      alert('Restauration terminée.');
+      showToast('Données restaurées');
+    }catch(err){
+      alert('Fichier de sauvegarde invalide.');
+      console.log(err);
+    }finally{
+      const input1 = document.getElementById('restoreFileBackup');
+      if(input1) input1.value = '';
+    }
+  };
+  reader.onerror = function(){
+    alert('Lecture du fichier impossible.');
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function renderBackup(){
+  // section statique
+}
+
+function renderAll(){
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(data.tab || "home").classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === (data.tab || "home")));
+  renderHome();
+  renderAdd();
+  renderFixed();
+  renderView();
+  renderSummary();
+  renderBackup();
+}
+
+renderAll();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
+      console.log('Service Worker non installé :', err);
+    });
+  });
+}
+</script>
 </body>
 </html>

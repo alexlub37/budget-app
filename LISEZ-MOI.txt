@@ -1,18 +1,21 @@
-YoNo Budget V6.6.5
+YoNo Budget V6.6.7 final
 
 Base utilisée :
 - V6.6.4
 
-Ajout :
+Ce qui est ajouté :
 - logo YoNo en haut à droite sur chaque onglet
-- taille discrète mais bien visible
+- logo un peu plus gros
 - aucun changement de logique
 - aucune modification des sauvegardes ou des données
 
-Procédure :
-1. Télécharger le zip
-2. Extraire dans Fichiers
-3. Upload files sur GitHub
-4. Remplacer les anciens
-5. Commit changes
-6. Ouvrir le lien dans Safari
+Contenu du pack :
+- index.html
+- manifest.json
+- service-worker.js
+- logo-yono-budget.png
+- icon-1024.png
+- icon-512.png
+- icon-192.png
+- icon-180.png
+- LISEZ-MOI.txt
