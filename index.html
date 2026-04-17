@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.6.3</title>
+<title>YoNo Budget V6.6.4</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -32,8 +32,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
   background:linear-gradient(180deg,#eef4ff 0%,#f7f9fc 20%,#f3f6fb 100%);
   margin:0;
-  padding:12px 12px calc(220px + env(safe-area-inset-bottom));
-  overflow-x:hidden;
+  padding:12px 12px calc(210px + env(safe-area-inset-bottom));
   color:var(--text);
 }
 h2{
@@ -43,7 +42,6 @@ h2{
 }
 .card{
   background:rgba(255,255,255,.94);
-  overflow:visible;
   backdrop-filter:blur(6px);
   border-radius:var(--radius);
   padding:16px;
@@ -146,12 +144,12 @@ label{
   color:var(--blue);
   background:#eef4ff;
 }
-.section{display:none;padding-bottom:36px}
+.section{display:none;padding-bottom:42px}
 .section.active{display:block}
 .row{
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:flex-start;
   gap:12px;
   padding:13px 0;
   border-bottom:1px solid #edf2f7;
@@ -210,25 +208,9 @@ label{
   z-index:60
 }
 .toast.show{opacity:1}
-.quick-modal{
-  position:fixed;
-  inset:0;
-  background:rgba(15,23,42,.42);
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  z-index:120;
-  padding-bottom:max(18px, env(safe-area-inset-bottom));
-}
+.quick-modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:50}
 .quick-modal.show{display:flex}
-.quick-sheet{
-  background:#fff;
-  width:100%;
-  max-width:900px;
-  border-radius:26px 26px 0 0;
-  padding:18px;
-  box-shadow:0 -10px 30px rgba(15,23,42,.25);
-}
+.quick-sheet{background:#fff;width:100%;max-width:900px;border-radius:24px 24px 0 0;padding:18px;box-shadow:0 -8px 24px rgba(15,23,42,.18)}
 @media (max-width: 390px){
   .big{font-size:46px}
   .nav button{font-size:10px}
@@ -424,7 +406,7 @@ label{
   </div>
 </div>
 
-<div style="height:170px"></div>
+<div style="height:170px" aria-hidden="true"></div>
 <div class="nav">
   <button data-tab="home" onclick="showTab('home')">🏠<span>Accueil</span></button>
   <button data-tab="add" onclick="showTab('add')">➕<span>Ajouter</span></button>
