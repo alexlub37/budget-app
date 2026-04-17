@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.6</title>
+<title>YoNo Budget V6.6.1</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -205,6 +205,9 @@ label{
   z-index:60
 }
 .toast.show{opacity:1}
+.quick-modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.quick-modal.show{display:flex}
+.quick-sheet{background:#fff;width:100%;max-width:900px;border-radius:24px 24px 0 0;padding:18px;box-shadow:0 -8px 24px rgba(15,23,42,.18)}
 @media (max-width: 390px){
   .big{font-size:46px}
   .nav button{font-size:10px}
