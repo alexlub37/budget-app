@@ -1,21 +1,21 @@
-YoNo Budget V6.4.2 - restauration seule
+YoNo Budget V6.5 - pack complet
 
 Base :
-- repart de la version stable V6.3.1
-- ne change pas l'organisation générale
-- corrige seulement la restauration
+- repart de la version complète qui fonctionnait
+- garde le logo, les icônes et le service worker
+- garde Accueil / Ajouter / Fixes / Vue fixes / Résumé
+- ajoute l'onglet Sauvegarde
 
-Ce qui change :
-- champ visible pour choisir le fichier .json
-- restauration plus robuste
-- message 'Restauration terminée'
+Dans Sauvegarde :
+- Sauvegarder mes FIX -> yono-fix.json
+- Sauvegarder ce MOIS -> yono-mois-AAAA-MM.json
+- Restaurer mes données -> accepte un fichier FIX ou une sauvegarde complète
 
 Procédure :
-1. Extraire le zip
+1. Extraire ce zip
 2. Upload files sur GitHub
 3. Remplacer les anciens
 4. Commit changes
 5. Ouvrir le lien dans Safari
-6. Aller dans Résumé
-7. Choisir le fichier de sauvegarde .json
-8. Vérifier que les fixes reviennent
+6. Si besoin, restaurer tes données dans Sauvegarde
+7. Vérifier les onglets, les fixes et le résumé
