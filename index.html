@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.6.7</title>
+<title>YoNo Budget V6.6.8</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -233,6 +233,26 @@ label{
   box-shadow:0 4px 10px rgba(15,23,42,.08);
   opacity:.98;
 }
+
+#home .sticky-balance{
+  position:sticky;
+  top:10px;
+  z-index:35;
+  background:linear-gradient(135deg,#fff 0%,#ffffff 35%,#f8fbff 100%);
+  border:1px solid #e7eef8;
+  box-shadow:0 10px 26px rgba(15,23,42,.08);
+}
+#home .sticky-balance .small{
+  font-weight:700;
+}
+#home .sticky-balance .big{
+  letter-spacing:-0.05em;
+}
+@media (max-width:390px){
+  #home .sticky-balance{
+    top:8px;
+  }
+}
 @media (max-width:390px){
   .header-logo{height:42px}
 }
@@ -243,9 +263,10 @@ label{
 <div id="home" class="section active">
   <div class="page-header"><h2>🏠<span>Accueil</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
 
-  <div class="card">
+  <div class="card sticky-balance">
     <div class="small">Argent restant</div>
     <div class="big" id="reste">0 €</div>
+    <div class="small" style="margin-top:8px">Le montant reste visible pendant le scroll</div>
   </div>
 
   <div class="card">
@@ -259,7 +280,7 @@ label{
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" style="padding-top:12px">
     <div class="row"><div>Salaire</div><div class="amount good" id="salaireHome">0 €</div></div>
     <div class="row"><div>Épargne</div><div class="amount" id="epargneHome">0 €</div></div>
     <div class="row"><div>Sécurité</div><div class="amount" id="secuHome">0 €</div></div>
