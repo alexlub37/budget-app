@@ -1,13 +1,14 @@
-YoNo Budget V6.6.2
+YoNo Budget V6.6.3
 
-Correction ergonomie :
+Corrections :
+- le formulaire rapide (Description / Montant / Catégorie / Valider / Annuler)
+  est de nouveau masqué correctement
+- il ne s'affiche que quand on clique sur un bouton rapide
 - plus d'espace en bas des pages
-- le contenu ne passe plus sous la barre d'onglets
-- scroll plus confortable
-- montants mieux tenus sur une ligne
+- la barre d'onglets ne masque plus le contenu du bas
 
 Base conservée :
-- même structure que la version qui fonctionnait
-- même logique
+- même logique projet
+- même design moderne
 - mêmes sauvegardes
-- même design V6.6
+- mêmes onglets
