@@ -3,52 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.5</title>
+<title>YoNo Budget V6.6</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="theme-color" content="#22c55e">
 <style>
 :root{
-  --bg:#f5f7fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
-  --blue:#2563eb; --blue-soft:#dbeafe; --green:#15803d; --red:#c62828; --orange:#b45309;
+  --bg:#f3f6fb;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --blue:#2563eb;
+  --blue-soft:#e0ecff;
+  --green:#16a34a;
+  --green-soft:#dcfce7;
+  --red:#dc2626;
+  --red-soft:#fee2e2;
+  --orange:#d97706;
+  --shadow:0 10px 30px rgba(15,23,42,.08);
+  --shadow-soft:0 4px 14px rgba(15,23,42,.06);
+  --radius:20px;
 }
-*{box-sizing:border-box}
-body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:12px 12px 92px;color:var(--text)}
-h2{font-size:28px;margin:10px 0 14px}
-.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.big{font-size:48px;font-weight:800;line-height:1}
-.btn{background:var(--blue-soft);color:#1d4ed8;padding:14px;border-radius:14px;text-align:center;font-weight:700;border:none;cursor:pointer;width:100%}
-.btn-primary{background:var(--blue);color:#fff}
-.btn-danger{background:#fee2e2;color:#b91c1c}
-.btn-success{background:#dcfce7;color:#166534}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+  background:linear-gradient(180deg,#eef4ff 0%,#f7f9fc 20%,#f3f6fb 100%);
+  margin:0;
+  padding:12px 12px 104px;
+  color:var(--text);
+}
+h2{
+  font-size:30px;
+  margin:10px 2px 16px;
+  letter-spacing:-0.03em;
+}
+.card{
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(6px);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow-soft);
+  border:1px solid rgba(255,255,255,.8);
+}
+.big{
+  font-size:52px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-0.05em;
+}
+.btn{
+  background:var(--blue-soft);
+  color:#1d4ed8;
+  padding:15px 14px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  width:100%;
+  font-size:16px;
+  box-shadow:0 2px 8px rgba(37,99,235,.10);
+}
+.btn:active{transform:scale(.98)}
+.btn-primary{
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:#fff;
+}
+.btn-danger{
+  background:linear-gradient(135deg,#fee2e2,#fecaca);
+  color:#b91c1c;
+  box-shadow:none;
+}
+.btn-success{
+  background:linear-gradient(135deg,#dcfce7,#bbf7d0);
+  color:#166534;
+  box-shadow:none;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
 .field{margin-bottom:12px}
-label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
-.input, select{width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:14px;font-size:20px;background:#fff}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 4px;border-top:1px solid #ccc}
-.nav button{flex:1;background:#fff;border:none;color:#6b7280;font-size:16px;padding:8px 2px}
-.nav button.active{color:var(--blue);font-weight:800}
+label{
+  display:block;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:7px;
+  font-weight:700;
+}
+.input, select{
+  width:100%;
+  padding:15px 16px;
+  border:1px solid #dbe2ea;
+  border-radius:16px;
+  font-size:18px;
+  background:#fff;
+  color:var(--text);
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.03);
+}
+.input:focus, select:focus{
+  outline:none;
+  border-color:#93c5fd;
+  box-shadow:0 0 0 4px rgba(59,130,246,.12);
+}
+.nav{
+  position:fixed;
+  bottom:12px;
+  left:12px;
+  right:12px;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(12px);
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:4px;
+  padding:8px 6px;
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(255,255,255,.9);
+}
+.nav button{
+  background:transparent;
+  border:none;
+  color:#64748b;
+  font-size:11px;
+  font-weight:700;
+  padding:10px 4px 8px;
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  line-height:1.1;
+}
+.nav button.active{
+  color:var(--blue);
+  background:#eef4ff;
+}
 .section{display:none}
 .section.active{display:block}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid #edf2f7;
+}
 .row:last-child{border-bottom:none}
-.amount{font-size:22px;font-weight:800}
-.good{color:var(--green)} .bad{color:var(--red)} .warn{color:var(--orange)}
-.small{color:var(--muted);font-size:15px}
-
-.quick-modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:50}
-.quick-modal.show{display:flex}
-.quick-sheet{background:#fff;width:100%;max-width:900px;border-radius:22px 22px 0 0;padding:16px;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
-.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 16px;border-radius:999px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60}
+.amount{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-0.02em;
+}
+.good{color:var(--green)}
+.bad{color:var(--red)}
+.warn{color:var(--orange)}
+.small{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+#home .card:first-of-type{
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 55%,#2563eb 100%);
+  color:#fff;
+  box-shadow:0 18px 40px rgba(37,99,235,.22);
+}
+#home .card:first-of-type .small{color:rgba(255,255,255,.78)}
+#home .card:first-of-type .big.good,
+#home .card:first-of-type .big.warn,
+#home .card:first-of-type .big.bad{color:#fff}
+#home .grid .btn{
+  background:#fff;
+  color:#0f172a;
+  border:1px solid #e8edf5;
+  box-shadow:var(--shadow-soft);
+}
+#home .grid .btn:nth-child(1){background:linear-gradient(135deg,#eff6ff,#ffffff)}
+#home .grid .btn:nth-child(2){background:linear-gradient(135deg,#f0fdf4,#ffffff)}
+#home .grid .btn:nth-child(3){background:linear-gradient(135deg,#fff7ed,#ffffff)}
+#home .grid .btn:nth-child(4){background:linear-gradient(135deg,#eef2ff,#ffffff)}
+#home .grid .btn:nth-child(5){background:linear-gradient(135deg,#fdf2f8,#ffffff)}
+#home .grid .btn:nth-child(6){background:linear-gradient(135deg,#ecfdf5,#ffffff)}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:102px;
+  transform:translateX(-50%);
+  background:#0f172a;
+  color:#fff;
+  padding:12px 16px;
+  border-radius:999px;
+  font-size:14px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:60
+}
 .toast.show{opacity:1}
-
+@media (max-width: 390px){
+  .big{font-size:46px}
+  .nav button{font-size:10px}
+}
 </style>
 </head>
 <body>
 
 <div id="home" class="section active">
-  <h2>Accueil</h2>
+  <h2>🏠<span>Accueil</span></h2>
 
   <div class="card">
     <div class="small">Argent restant</div>
@@ -71,14 +237,14 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
     <div class="row"><div>Épargne</div><div class="amount" id="epargneHome">0 €</div></div>
     <div class="row"><div>Sécurité</div><div class="amount" id="secuHome">0 €</div></div>
     <div class="row"><div>Budget du mois</div><div class="amount" id="budgetHome">0 €</div></div>
-    <div class="row"><div>Fixes</div><div class="amount bad" id="fixesHome">0 €</div></div>
+    <div class="row"><div>🧱<span>Fixes</span></div><div class="amount bad" id="fixesHome">0 €</div></div>
     <div class="row"><div>Variables</div><div class="amount warn" id="variablesHome">0 €</div></div>
     <div class="row"><div>Revenus</div><div class="amount good" id="revenusHome">0 €</div></div>
   </div>
 </div>
 
 <div id="add" class="section">
-  <h2>Ajouter</h2>
+  <h2>➕<span>Ajouter</span></h2>
   <div class="card">
     <div class="field">
       <label>Description</label>
@@ -108,7 +274,7 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 </div>
 
 <div id="fixed" class="section">
-  <h2>Fixes</h2>
+  <h2>🧱<span>Fixes</span></h2>
   <div class="card">
     <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalFixed">0 €</div></div>
     <div class="field">
@@ -122,11 +288,11 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
     <div class="field">
       <label>Type</label>
       <select id="fixedKind">
-        <option>Fixes</option>
+        <option>🧱<span>Fixes</span></option>
         <option>Abonnements</option>
       </select>
     </div>
-    <button class="btn btn-primary" onclick="saveFixed()">Ajouter</button>
+    <button class="btn btn-primary" onclick="saveFixed()">➕<span>Ajouter</span></button>
     <button class="btn btn-success" onclick="updateFixesNow()">Mettre à jour les fixes</button>
     <div class="small">Le bouton met à jour l’affichage mensuel à partir de ta liste de fixes.</div>
   </div>
@@ -134,7 +300,7 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 </div>
 
 <div id="view" class="section">
-  <h2>Vue fixes</h2>
+  <h2>👁<span>Vue</span></h2>
   <div class="card">
     <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalView">0 €</div></div>
     <div id="fixesViewList"></div>
@@ -142,7 +308,7 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 </div>
 
 <div id="summary" class="section">
-  <h2>Résumé</h2>
+  <h2>📊<span>Résumé</span></h2>
   <div class="card">
     <div class="field">
       <label>Revenu fixe (€)</label>
@@ -209,7 +375,7 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 
 
 <div id="backup" class="section">
-  <h2>Sauvegarde</h2>
+  <h2>💾<span>Sauv.</span></h2>
   <div class="card">
     <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
     <button class="btn" onclick="saveFix()">Sauvegarder mes FIX</button>
@@ -233,12 +399,12 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 </div>
 
 <div class="nav">
-  <button data-tab="home" onclick="showTab('home')">Accueil</button>
-  <button data-tab="add" onclick="showTab('add')">Ajouter</button>
-  <button data-tab="fixed" onclick="showTab('fixed')">Fixes</button>
-  <button data-tab="view" onclick="showTab('view')">Vue fixes</button>
-  <button data-tab="summary" onclick="showTab('summary')">Résumé</button>
-  <button data-tab="backup" onclick="showTab('backup')">Sauvegarde</button>
+  <button data-tab="home" onclick="showTab('home')">🏠<span>Accueil</span></button>
+  <button data-tab="add" onclick="showTab('add')">➕<span>Ajouter</span></button>
+  <button data-tab="fixed" onclick="showTab('fixed')">🧱<span>Fixes</span></button>
+  <button data-tab="view" onclick="showTab('view')">👁<span>Vue</span></button>
+  <button data-tab="summary" onclick="showTab('summary')">📊<span>Résumé</span></button>
+  <button data-tab="backup" onclick="showTab('backup')">💾<span>Sauv.</span></button>
 </div>
 
 <script>
@@ -482,7 +648,7 @@ function renderFixed(){
       <div class="field">
         <label>Type</label>
         <select onchange="updateFixed(${f.id}, 'type', this.value)">
-          <option ${f.type==='Fixes'?'selected':''}>Fixes</option>
+          <option ${f.type==='Fixes'?'selected':''}>🧱<span>Fixes</span></option>
           <option ${f.type==='Abonnements'?'selected':''}>Abonnements</option>
         </select>
       </div>
