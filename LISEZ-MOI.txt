@@ -1,14 +1,13 @@
-YoNo Budget V6.6.4
+YoNo Budget V6.6.5
 
 Base utilisée :
-- V6.6.1
+- V6.6.4
 
-Correction apportée :
-- plus d'espace en bas des pages
-- la barre d'onglets remonte légèrement
-- le contenu du bas ne doit plus passer dessous
+Ajout :
+- logo YoNo en haut à droite sur chaque onglet
+- taille discrète mais bien visible
 - aucun changement de logique
-- aucun changement sur le formulaire rapide
+- aucune modification des sauvegardes ou des données
 
 Procédure :
 1. Télécharger le zip
