@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.3.1</title>
+<title>YoNo Budget V6.4</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -56,14 +56,8 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
   </div>
 
   <div class="card">
-    <div class="grid">
-      <button class="btn" onclick="openQuickModal('Courses','Courses','Dépense')">Courses</button>
-      <button class="btn" onclick="openQuickModal('Boulangerie','Boulangerie','Dépense')">Boulangerie</button>
-      <button class="btn" onclick="openQuickModal('Snack','Snack','Dépense')">Snack</button>
-      <button class="btn" onclick="openQuickModal('Carburant','Carburant','Dépense')">Carburant</button>
-      <button class="btn" onclick="openQuickModal('Santé','Santé','Dépense')">Santé</button>
-      <button class="btn" onclick="openQuickModal('Revenu','Revenus','Revenu')">Revenu</button>
-    </div>
+    <div class="small" style="margin-bottom:10px">Boutons rapides</div>
+    <div id="quickButtonsHome" class="grid"></div>
   </div>
 
   <div class="card">
@@ -179,6 +173,13 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
   </div>
 
   <div class="card">
+    <div class="small" style="margin-bottom:8px">Configurer les boutons rapides</div>
+    <div id="quickButtonsConfig"></div>
+    <button class="btn btn-primary" onclick="addQuickButton()">Ajouter un bouton rapide</button>
+    <div class="small">Tu peux en mettre jusqu’à 8. Quand tu cliques sur un bouton, tu saisis toujours le montant manuellement.</div>
+  </div>
+
+  <div class="card">
     <div class="small" style="margin-bottom:8px">Par catégorie</div>
     <div id="catSummary"></div>
   </div>
@@ -229,7 +230,15 @@ function defaultData(){
     pctSecu:20,
     fixes:[],
     operations:[],
-    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
+    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"],
+    quickButtons:[
+      {id:1,label:"Courses",category:"Courses",type:"Dépense"},
+      {id:2,label:"Boulangerie",category:"Boulangerie",type:"Dépense"},
+      {id:3,label:"Snack",category:"Snack",type:"Dépense"},
+      {id:4,label:"Carburant",category:"Carburant",type:"Dépense"},
+      {id:5,label:"Santé",category:"Santé",type:"Dépense"},
+      {id:6,label:"Revenu",category:"Revenus",type:"Revenu"}
+    ]
   };
 }
 
@@ -239,7 +248,12 @@ function loadData(){
     if(!raw) return defaultData();
     const parsed = JSON.parse(raw);
     const base = defaultData();
-    return {...base, ...parsed, categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories};
+    return {
+      ...base,
+      ...parsed,
+      categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories,
+      quickButtons:(parsed.quickButtons && parsed.quickButtons.length)?parsed.quickButtons:base.quickButtons
+    };
   }catch(e){
     return defaultData();
   }
@@ -272,6 +286,33 @@ function totals(){
 
 function showTab(tab){
   data.tab = tab;
+  saveData();
+}
+
+function addQuickButton(){
+  if((data.quickButtons || []).length >= 8){
+    alert("Maximum 8 boutons rapides.");
+    return;
+  }
+  const category = (data.categories && data.categories.includes("Divers")) ? "Divers" : (data.categories[0] || "Divers");
+  data.quickButtons.push({
+    id: Date.now() + Math.random(),
+    label: "Nouveau",
+    category: category,
+    type: "Dépense"
+  });
+  saveData();
+}
+
+function updateQuickButton(id, field, value){
+  const btn = (data.quickButtons || []).find(x => x.id === id);
+  if(!btn) return;
+  btn[field] = value;
+  saveData();
+}
+
+function deleteQuickButton(id){
+  data.quickButtons = (data.quickButtons || []).filter(x => x.id !== id);
   saveData();
 }
 
@@ -321,11 +362,11 @@ function confirmQuickAdd(){
   showToast((quickType === "Revenu" ? "Revenu ajouté : " : "Dépense ajoutée : ") + label + " " + euro(amount));
 }
 
-function fillCategorySelect(){
-  const sel = document.getElementById("addCategory");
+function fillCategorySelect(id, selected){
+  const sel = document.getElementById(id);
   if(!sel) return;
   const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
-  sel.innerHTML = cats.map(c => `<option>${c}</option>`).join("");
+  sel.innerHTML = cats.map(c => `<option ${c===selected?'selected':''}>${c}</option>`).join("");
 }
 
 function fillCategorySelect(id, selected){
@@ -437,10 +478,18 @@ function renderHome(){
   document.getElementById("fixesHome").textContent = euro(t.fixes);
   document.getElementById("variablesHome").textContent = euro(t.variables);
   document.getElementById("revenusHome").textContent = euro(t.revenus);
+
+  const box = document.getElementById("quickButtonsHome");
+  box.innerHTML = (data.quickButtons || []).map(btn => `
+    <button class="btn" onclick="openQuickModal(${JSON.stringify('')} + ${JSON.stringify('')}, ${JSON.stringify('')})"></button>
+  `).join("");
+  box.innerHTML = (data.quickButtons || []).map(btn => `
+    <button class="btn" onclick="openQuickModal(${JSON.stringify('x')}, ${JSON.stringify('y')}, ${JSON.stringify('z')})"></button>
+  `).join("");
 }
 
 function renderAdd(){
-  fillCategorySelect();
+  fillCategorySelect("addCategory", "Divers");
 }
 
 function renderFixed(){

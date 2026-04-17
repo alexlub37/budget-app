@@ -1,24 +1,27 @@
-YoNo Budget V6.3.1
+YoNo Budget V6.4
 
-Base propre et simple :
-- app vide au départ
-- logo inclus
-- sauvegarde / restauration incluses
-- onglets fonctionnels
-- catégories personnalisables
+Ajout principal :
+- boutons rapides personnalisables (jusqu'à 8)
+- chaque bouton garde :
+  - son nom
+  - sa catégorie
+  - son type (Dépense ou Revenu)
+- quand tu cliques sur un bouton, tu saisis toujours le montant manuellement
+
+Le reste est conservé :
+- sauvegarde / restauration
+- nouveau mois
 - fixes modifiables
 - vue fixes
 - résumé
-- nouveau mois
-- service worker inclus
+- logo
+- offline
 
-À faire :
-1. Extraire ce zip
-2. Add file > Upload files sur GitHub
-3. Envoyer tous les fichiers
-4. Remplacer les anciens
-5. Commit changes
-6. Ouvrir le lien dans Safari
-7. Vérifier les onglets
-8. Saisir tes fixes
-9. Aller dans Résumé > Sauvegarder mes données
+Mise à jour :
+1. Extraire le zip
+2. Upload files sur GitHub
+3. Remplacer les anciens
+4. Commit changes
+5. Ouvrir Safari puis ton lien
+6. Tester les onglets
+7. Si besoin, Restaurer mes données dans Résumé
