@@ -1,16 +1,21 @@
-YoNo Budget V6.4.1
+YoNo Budget V6.4.2 - restauration seule
 
-Corrections :
-- bouton Supprimer visible pour les boutons rapides
-- choix de la catégorie visible
-- type Dépense / Revenu visible
-- jusqu’à 8 boutons rapides
+Base :
+- repart de la version stable V6.3.1
+- ne change pas l'organisation générale
+- corrige seulement la restauration
+
+Ce qui change :
+- champ visible pour choisir le fichier .json
+- restauration plus robuste
+- message 'Restauration terminée'
 
 Procédure :
 1. Extraire le zip
 2. Upload files sur GitHub
 3. Remplacer les anciens
 4. Commit changes
-5. Ouvrir dans Safari
-6. Restaurer les données si besoin
-7. Configurer les boutons rapides dans Résumé
+5. Ouvrir le lien dans Safari
+6. Aller dans Résumé
+7. Choisir le fichier de sauvegarde .json
+8. Vérifier que les fixes reviennent

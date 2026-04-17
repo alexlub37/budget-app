@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.4.1</title>
+<title>YoNo Budget V6.4.2</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -56,8 +56,14 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
   </div>
 
   <div class="card">
-    <div class="small" style="margin-bottom:10px">Boutons rapides</div>
-    <div id="quickButtonsHome" class="grid"></div>
+    <div class="grid">
+      <button class="btn" onclick="openQuickModal('Courses','Courses','Dépense')">Courses</button>
+      <button class="btn" onclick="openQuickModal('Boulangerie','Boulangerie','Dépense')">Boulangerie</button>
+      <button class="btn" onclick="openQuickModal('Snack','Snack','Dépense')">Snack</button>
+      <button class="btn" onclick="openQuickModal('Carburant','Carburant','Dépense')">Carburant</button>
+      <button class="btn" onclick="openQuickModal('Santé','Santé','Dépense')">Santé</button>
+      <button class="btn" onclick="openQuickModal('Revenu','Revenus','Revenu')">Revenu</button>
+    </div>
   </div>
 
   <div class="card">
@@ -157,8 +163,11 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
     <div class="small" id="pctInfo"></div>
     <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
     <button class="btn" onclick="exportBackup()">Sauvegarder mes données</button>
-    <button class="btn" onclick="document.getElementById('restoreFile').click()">Restaurer mes données</button>
-    <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="importBackup(event)">
+    <div class="field" style="margin-top:12px">
+      <label>Restaurer une sauvegarde (.json)</label>
+      <input class="input" id="restoreFile" type="file" accept=".json,application/json" onchange="importBackup(event)">
+    </div>
+    <div class="small">Choisis ton fichier de sauvegarde pour réinjecter tes fixes, opérations, catégories et réglages.</div>
     <button class="btn btn-danger" onclick="newMonth()">Nouveau mois</button>
     <div class="small">Nouveau mois efface seulement les opérations du mois. Sauvegarder exporte fixes, opérations, catégories et réglages.</div>
   </div>
@@ -170,13 +179,6 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
     <div class="row"><div>Sécurité</div><div class="amount" id="sumSecu">0 €</div></div>
     <div class="row"><div>Budget du mois</div><div class="amount" id="sumBudget">0 €</div></div>
     <div class="row"><div>% Vie quotidienne</div><div class="amount" id="sumPctVie">0 %</div></div>
-  </div>
-
-  <div class="card">
-    <div class="small" style="margin-bottom:8px">Configurer les boutons rapides</div>
-    <div id="quickButtonsConfig"></div>
-    <button class="btn btn-primary" onclick="addQuickButton()">Ajouter un bouton rapide</button>
-    <div class="small">Tu peux en mettre jusqu’à 8. Pour chaque bouton : nom, catégorie, type, supprimer. Quand tu cliques sur un bouton, tu saisis toujours le montant manuellement.</div>
   </div>
 
   <div class="card">
@@ -230,15 +232,7 @@ function defaultData(){
     pctSecu:20,
     fixes:[],
     operations:[],
-    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"],
-    quickButtons:[
-      {id:1,label:"Courses",category:"Courses",type:"Dépense"},
-      {id:2,label:"Boulangerie",category:"Boulangerie",type:"Dépense"},
-      {id:3,label:"Snack",category:"Snack",type:"Dépense"},
-      {id:4,label:"Carburant",category:"Carburant",type:"Dépense"},
-      {id:5,label:"Santé",category:"Santé",type:"Dépense"},
-      {id:6,label:"Revenu",category:"Revenus",type:"Revenu"}
-    ]
+    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
   };
 }
 
@@ -248,12 +242,7 @@ function loadData(){
     if(!raw) return defaultData();
     const parsed = JSON.parse(raw);
     const base = defaultData();
-    return {
-      ...base,
-      ...parsed,
-      categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories,
-      quickButtons:(parsed.quickButtons && parsed.quickButtons.length)?parsed.quickButtons:base.quickButtons
-    };
+    return {...base, ...parsed, categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories};
   }catch(e){
     return defaultData();
   }
@@ -286,34 +275,6 @@ function totals(){
 
 function showTab(tab){
   data.tab = tab;
-  saveData();
-}
-
-function addQuickButton(){
-  if((data.quickButtons || []).length >= 8){
-    alert("Maximum 8 boutons rapides.");
-    return;
-  }
-  const category = (data.categories && data.categories.includes("Divers")) ? "Divers" : ((data.categories && data.categories[0]) || "Divers");
-  data.quickButtons = data.quickButtons || [];
-  data.quickButtons.push({
-    id: Date.now() + Math.random(),
-    label: "Nouveau",
-    category: category,
-    type: "Dépense"
-  });
-  saveData();
-}
-
-function updateQuickButton(id, field, value){
-  const btn = (data.quickButtons || []).find(x => x.id === id);
-  if(!btn) return;
-  btn[field] = value;
-  saveData();
-}
-
-function deleteQuickButton(id){
-  data.quickButtons = (data.quickButtons || []).filter(x => x.id !== id);
   saveData();
 }
 
@@ -363,11 +324,18 @@ function confirmQuickAdd(){
   showToast((quickType === "Revenu" ? "Revenu ajouté : " : "Dépense ajoutée : ") + label + " " + euro(amount));
 }
 
-function fillCategorySelect(id, selected){
-  const sel = document.getElementById(id);
+function fillCategorySelect(){
+  const sel = document.getElementById("addCategory");
   if(!sel) return;
   const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
-  sel.innerHTML = cats.map(c => `<option ${c===selected?'selected':''}>${c}</option>`).join("");
+  sel.innerHTML = cats.map(c => `<option>${c}</option>`).join("");
+}
+
+function fillCategorySelect(id, selected){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
+  el.innerHTML = cats.map(c => `<option ${c===selected?'selected':''}>${c}</option>`).join("");
 }
 
 function saveEntry(){
@@ -472,18 +440,10 @@ function renderHome(){
   document.getElementById("fixesHome").textContent = euro(t.fixes);
   document.getElementById("variablesHome").textContent = euro(t.variables);
   document.getElementById("revenusHome").textContent = euro(t.revenus);
-
-  const box = document.getElementById("quickButtonsHome");
-  box.innerHTML = (data.quickButtons || []).map(btn => {
-    const safeLabel = String(btn.label || "").replace(/'/g, "&#39;");
-    const safeCategory = String(btn.category || "").replace(/'/g, "&#39;");
-    const safeType = String(btn.type || "Dépense").replace(/'/g, "&#39;");
-    return `<button class="btn" onclick="openQuickModal('${safeLabel}','${safeCategory}','${safeType}')">${safeLabel}</button>`;
-  }).join("");
 }
 
 function renderAdd(){
-  fillCategorySelect("addCategory", "Divers");
+  fillCategorySelect();
 }
 
 function renderFixed(){
@@ -538,30 +498,6 @@ function renderSummary(){
   document.getElementById("sumBudget").textContent = euro(t.budget);
   document.getElementById("sumPctVie").textContent = t.pctVie + " %";
 
-  const qBox = document.getElementById("quickButtonsConfig");
-  qBox.innerHTML = (data.quickButtons || []).map(btn => `
-    <div class="card" style="box-shadow:none;border:1px dashed #e5e7eb;padding:14px;margin-bottom:12px">
-      <div class="field">
-        <label>Nom du bouton</label>
-        <input class="input" value="${btn.label}" onchange="updateQuickButton(${btn.id}, 'label', this.value)">
-      </div>
-      <div class="field">
-        <label>Catégorie</label>
-        <select onchange="updateQuickButton(${btn.id}, 'category', this.value)">
-          ${(data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr')).map(c => `<option ${btn.category===c?'selected':''}>${c}</option>`).join("")}
-        </select>
-      </div>
-      <div class="field">
-        <label>Type</label>
-        <select onchange="updateQuickButton(${btn.id}, 'type', this.value)">
-          <option ${btn.type==='Dépense'?'selected':''}>Dépense</option>
-          <option ${btn.type==='Revenu'?'selected':''}>Revenu</option>
-        </select>
-      </div>
-      <button class="btn btn-danger" onclick="deleteQuickButton(${btn.id})">Supprimer</button>
-    </div>
-  `).join("") || `<div class="small">Aucun bouton rapide.</div>`;
-
   const byCat = {};
   data.fixes.forEach(f => { byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant||0); });
   data.operations.forEach(o => { byCat[o.category] = (byCat[o.category] || 0) + (o.type==="Revenu" ? Number(o.montant||0) : -Number(o.montant||0)); });
@@ -585,6 +521,85 @@ function renderSummary(){
       </div>
     </div>
   `).join("") || `<div class="small">Aucune opération.</div>`;
+}
+
+function newMonth(){
+  if(confirm("Démarrer un nouveau mois ? Les opérations seront supprimées.")){
+    data.operations = [];
+    saveData();
+  }
+}
+
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+}
+
+function exportBackup(){
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    app: "YoNo Budget",
+    version: "V6.4.2",
+    data: data
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = 'yono-budget-sauvegarde-' + stamp + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Sauvegarde téléchargée');
+}
+
+function importBackup(event){
+  const file = event && event.target && event.target.files && event.target.files[0];
+  if(!file){
+    alert('Aucun fichier sélectionné.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const rawText = e && e.target ? e.target.result : '';
+      const parsed = JSON.parse(rawText);
+      const imported = parsed && parsed.data ? parsed.data : parsed;
+      const base = defaultData();
+
+      const restored = {
+        ...base,
+        ...imported,
+        fixes: Array.isArray(imported.fixes) ? imported.fixes : [],
+        operations: Array.isArray(imported.operations) ? imported.operations : [],
+        categories: Array.isArray(imported.categories) && imported.categories.length ? imported.categories : base.categories
+      };
+
+      data = restored;
+      localStorage.setItem(KEY, JSON.stringify(data));
+      renderAll();
+      alert('Restauration terminée.');
+      showToast('Données restaurées');
+    }catch(err){
+      alert('Fichier de sauvegarde invalide.');
+      console.log(err);
+    }finally{
+      const input = document.getElementById('restoreFile');
+      if(input) input.value = '';
+    }
+  };
+  reader.onerror = function(){
+    alert('Lecture du fichier impossible.');
+  };
+  reader.readAsText(file, 'utf-8');
 }
 
 function renderAll(){
