@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.2</title>
+<title>YoNo Budget V6.3</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -162,8 +162,11 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
     </div>
     <div class="small" id="pctInfo"></div>
     <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+    <button class="btn" onclick="exportBackup()">Sauvegarder mes données</button>
+    <button class="btn" onclick="document.getElementById('restoreFile').click()">Restaurer mes données</button>
+    <input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="importBackup(event)">
     <button class="btn btn-danger" onclick="newMonth()">Nouveau mois</button>
-    <div class="small">Réinitialise uniquement les opérations du mois</div>
+    <div class="small">Nouveau mois efface seulement les opérations du mois. Sauvegarder exporte fixes, opérations, catégories et réglages.</div>
   </div>
 
   <div class="card">
@@ -216,7 +219,7 @@ label{display:block;font-size:15px;color:var(--muted);margin-bottom:6px}
 </div>
 
 <script>
-const KEY = "budget_v48";
+const KEY = "yono_budget_v63";
 
 function defaultData(){
   return {
@@ -270,6 +273,7 @@ function totals(){
 function showTab(tab){
   data.tab = tab;
   saveData();
+  showToast('Réglages enregistrés');
 }
 
 let quickType = "Dépense";
@@ -338,8 +342,8 @@ function saveEntry(){
   const type = document.getElementById("addType").value;
   const selectedCategory = document.getElementById("addCategory").value;
   const newCategory = (document.getElementById("newCategoryInput").value || "").trim();
-
   let category = selectedCategory;
+
   if(newCategory){
     if(!data.categories.includes(newCategory)){
       data.categories.push(newCategory);
@@ -351,16 +355,15 @@ function saveEntry(){
     alert("Renseigne une description et un montant valide.");
     return;
   }
-
   data.operations.unshift({
     id: Date.now() + Math.random(),
     desc, montant: amount, type, category
   });
-
   document.getElementById("addDesc").value = "";
   document.getElementById("addAmount").value = "";
   document.getElementById("newCategoryInput").value = "";
   saveData();
+  showToast((type === "Revenu" ? "Revenu ajouté : " : "Dépense ajoutée : ") + desc);
 }
 
 function saveFixed(){
@@ -378,6 +381,7 @@ function saveFixed(){
   document.getElementById("fixedDesc").value = "";
   document.getElementById("fixedAmount").value = "";
   saveData();
+  showToast('Fixe ajouté');
 }
 
 function updateFixesNow(){
@@ -415,6 +419,7 @@ function saveSettings(){
     return;
   }
   saveData();
+  showToast('Réglages enregistrés');
 }
 
 function deleteOp(id){
@@ -520,8 +525,59 @@ function newMonth(){
   if(confirm("Démarrer un nouveau mois ? Les opérations seront supprimées.")){
     data.operations = [];
     saveData();
+    showToast('Nouveau mois prêt');
   }
 }
+}
+
+
+function exportBackup(){
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    app: "YoNo Budget",
+    version: "V6.3",
+    data: data
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = 'yono-budget-sauvegarde-' + stamp + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Sauvegarde téléchargée');
+}
+
+function importBackup(event){
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const parsed = JSON.parse(e.target.result);
+      const imported = parsed.data ? parsed.data : parsed;
+      const base = defaultData();
+      data = {
+        ...base,
+        ...imported,
+        fixes: Array.isArray(imported.fixes) ? imported.fixes : base.fixes,
+        operations: Array.isArray(imported.operations) ? imported.operations : base.operations,
+        categories: Array.isArray(imported.categories) && imported.categories.length ? imported.categories : base.categories
+      };
+      saveData();
+      showToast('Données restaurées');
+    }catch(err){
+      alert('Fichier de sauvegarde invalide.');
+    }finally{
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
 
 function renderAll(){
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -536,16 +592,5 @@ function renderAll(){
 
 renderAll();
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
-      console.log('Service Worker non installé :', err);
-    });
-  });
-}
-</script>
 </body>
 </html>
-

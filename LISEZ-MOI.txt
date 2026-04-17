@@ -1,23 +1,25 @@
-YoNo Budget V6.2 OFFLINE
+YoNo Budget V6.3 - pack complet propre
 
-Contenu :
-- index.html : app complète
-- manifest.json : installation PWA
-- service-worker.js : mode hors ligne
-- icon-1024.png / 512 / 192 / 180 : icônes
-- logo-yono-budget.png : logo source
-
-Ce que cette version ajoute :
-- l'app peut se relancer hors ligne après avoir été ouverte au moins une fois avec internet
-- les données restent stockées sur le téléphone
-- les mises à jour de code peuvent être déployées sans retaper les fixes, si on garde la même base locale
-
-Pour mettre à jour GitHub :
-1. Extraire le zip
-2. Upload files sur GitHub
-3. Remplacer les anciens fichiers
-4. Commit changes
+Cette version repart proprement :
+- app vide au départ
+- logo inclus
+- sauvegarde / restauration incluses
+- catégories personnalisables
+- fixes modifiables
+- vue fixes
+- résumé
+- nouveau mois
 
 Important :
-- Après installation/mise à jour, ouvre l'app une fois avec internet pour que le mode hors ligne se mette en cache.
-- Si l'ancienne version reste affichée, supprime l'app de l'écran d'accueil puis réinstalle-la depuis Safari.
+- Comme c'est une base propre, tu peux saisir tes fixes une bonne fois
+- Ensuite utilise 'Sauvegarder mes données' dans Résumé
+- Tu pourras les remettre plus tard avec 'Restaurer mes données'
+
+Installation / mise à jour :
+1. Extraire ce zip
+2. Add file > Upload files sur GitHub
+3. Envoyer tous les fichiers
+4. Remplacer les anciens
+5. Commit changes
+6. Ouvrir le lien dans Safari
+7. Si l'icône ne change pas, supprimer l'app puis la remettre à l'écran d'accueil
