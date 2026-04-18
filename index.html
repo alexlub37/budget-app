@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.7.3</title>
+<title>YoNo Budget V6.7.4</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -316,6 +316,52 @@ label{
   40%{transform:scale(1);opacity:1}
 }
 
+
+.page-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:4px 2px 14px;
+}
+.page-header h2{
+  margin:0;
+  font-size:28px;
+  letter-spacing:-0.03em;
+}
+.header-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:800;
+  line-height:1;
+  box-shadow:0 6px 16px rgba(15,23,42,.08);
+}
+.header-chip .emoji{
+  font-size:18px;
+}
+.chip-home{background:#e0ecff;color:#1d4ed8;}
+.chip-add{background:#dcfce7;color:#166534;}
+.chip-fixed{background:#ffedd5;color:#c2410c;}
+.chip-view{background:#ede9fe;color:#6d28d9;}
+.chip-summary{background:#dbeafe;color:#1e40af;}
+.chip-backup{background:#e5e7eb;color:#374151;}
+
+.header-logo{
+  height:48px;
+  width:auto;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(15,23,42,.08);
+  opacity:.98;
+}
+@media (max-width:390px){
+  .header-logo{height:42px}
+  .page-header h2{font-size:24px}
+  .header-chip{padding:9px 12px}
+}
+
 </style>
 </head>
 <body>
@@ -331,7 +377,7 @@ label{
 
 
 <div id="home" class="section active">
-  <div class="page-header"><h2>🏠<span>Accueil</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-home"><span class="emoji">🏡</span><span>Accueil</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
 
   <div class="card sticky-balance" style="text-align:center;">
     <div class="small" style="text-align:center;">Budget restant</div>
@@ -362,7 +408,7 @@ label{
 </div>
 
 <div id="add" class="section">
-  <div class="page-header"><h2>➕<span>Ajouter</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-add"><span class="emoji">💸</span><span>Ajouter</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
     <div class="field">
       <label>Description</label>
@@ -392,7 +438,7 @@ label{
 </div>
 
 <div id="fixed" class="section">
-  <div class="page-header"><h2>🧱<span>Fixes</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-fixed"><span class="emoji">🧾</span><span>Fixes</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
     <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalFixed">0 €</div></div>
     <div class="field">
@@ -418,7 +464,7 @@ label{
 </div>
 
 <div id="view" class="section">
-  <div class="page-header"><h2>👁<span>Vue</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-view"><span class="emoji">🔍</span><span>Vue</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
     <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalView">0 €</div></div>
     <div id="fixesViewList"></div>
@@ -426,7 +472,7 @@ label{
 </div>
 
 <div id="summary" class="section">
-  <div class="page-header"><h2>📊<span>Résumé</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-summary"><span class="emoji">📈</span><span>Résumé</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
     <div class="field">
       <label>Revenu fixe (€)</label>
@@ -493,7 +539,7 @@ label{
 
 
 <div id="backup" class="section">
-  <div class="page-header"><h2>💾<span>Sauv.</span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">☁️</span><span>Sauvegarde</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
     <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
     <button class="btn" onclick="saveFix()">Sauvegarder mes FIX</button>
