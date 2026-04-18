@@ -540,6 +540,7 @@ label{
 
 <div id="backup" class="section">
   <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">⚙️</span><span>Réglages</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+
   <div class="card">
     <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
     <button class="btn" onclick="saveFix()">Sauvegarder mes FIX</button>
@@ -547,36 +548,7 @@ label{
   </div>
 
   <div class="card">
-    <div class="small" style="margin-bottom:8px">
-<!-- 🎨 Personnalisation couleurs -->
-<div class="card">
-  <div class="small" style="margin-bottom:10px">🎨 Personnalisation des couleurs</div>
-  <div id="colorPalette" style="display:flex;flex-wrap:wrap;gap:10px">
-  </div>
-</div>
-
-<script>
-const colors = ["#4CAF50","#2196F3","#FF5722","#9C27B0","#FFC107","#00BCD4","#E91E63","#8BC34A","#FF9800","#607D8B","#3F51B5","#009688","#F44336","#795548","#CDDC39","#673AB7"];
-
-const categories = ["Courses","Boulangerie","Snack","Carburant","Santé","Revenu"];
-
-const palette = document.getElementById("colorPalette");
-
-colors.forEach(c=>{
-  const btn = document.createElement("div");
-  btn.style.width="30px";
-  btn.style.height="30px";
-  btn.style.borderRadius="8px";
-  btn.style.background=c;
-  btn.style.cursor="pointer";
-  btn.onclick = ()=>{
-    localStorage.setItem("yonoColor", c);
-    alert("Couleur principale mise à jour !");
-  };
-  palette.appendChild(btn);
-});
-</script>
-Sauvegarde du mois (option)</div>
+    <div class="small" style="margin-bottom:8px">Sauvegarde du mois (option)</div>
     <button class="btn" onclick="saveMonth()">Sauvegarder ce MOIS</button>
     <div class="small">Crée un fichier yono-mois-AAAA-MM.json avec tes fixes, tes opérations, tes catégories et tes réglages.</div>
   </div>
@@ -589,7 +561,12 @@ Sauvegarde du mois (option)</div>
     </div>
     <div class="small">Compatible avec yono-fix.json, yono-mois-AAAA-MM.json et tes anciennes sauvegardes complètes.</div>
   </div>
-</div>
+
+  <div class="card">
+    <div class="small" style="margin-bottom:10px">🎨 Personnalisation des couleurs</div>
+    <div id="colorPalette" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+  </div>
+</div></div>
 
 <div style="height:170px" aria-hidden="true"></div>
 <div class="nav">
@@ -1059,6 +1036,27 @@ window.addEventListener('load', function(){
 document.addEventListener('DOMContentLoaded', function(){
   setTimeout(hideSplashScreen, 1200);
 });
+</script>
+
+
+<script>
+const colors = ["#4CAF50","#2196F3","#FF5722","#9C27B0","#FFC107","#00BCD4","#E91E63","#8BC34A","#FF9800","#607D8B","#3F51B5","#009688","#F44336","#795548","#CDDC39","#673AB7"];
+const palette = document.getElementById("colorPalette");
+if (palette) {
+  colors.forEach(c=>{
+    const btn = document.createElement("div");
+    btn.style.width="30px";
+    btn.style.height="30px";
+    btn.style.borderRadius="8px";
+    btn.style.background=c;
+    btn.style.cursor="pointer";
+    btn.onclick = ()=>{
+      localStorage.setItem("yonoColor", c);
+      alert("Couleur principale mise à jour !");
+    };
+    palette.appendChild(btn);
+  });
+}
 </script>
 
 </body>
