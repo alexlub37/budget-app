@@ -538,17 +538,17 @@ label{
 <div id="toast" class="toast"></div>
 
 
-<div id="backup" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">☁️</span><span>Sauvegarde</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+<div id="settings" class="section">
+  <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">⚙️</span><span>Réglages</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
-    <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
-    <button class="btn" onclick="saveFix()">Sauvegarder mes FIX</button>
+    <div class="small" style="margin-bottom:8px">Réglages de base</div>
+    <button class="btn" onclick="saveFix()">Réglagesr mes FIX</button>
     <div class="small">Crée un fichier yono-fix.json avec tes fixes et tes catégories.</div>
   </div>
 
   <div class="card">
-    <div class="small" style="margin-bottom:8px">Sauvegarde du mois (option)</div>
-    <button class="btn" onclick="saveMonth()">Sauvegarder ce MOIS</button>
+    <div class="small" style="margin-bottom:8px">Réglages du mois (option)</div>
+    <button class="btn" onclick="saveMonth()">Réglagesr ce MOIS</button>
     <div class="small">Crée un fichier yono-mois-AAAA-MM.json avec tes fixes, tes opérations, tes catégories et tes réglages.</div>
   </div>
 
@@ -909,7 +909,7 @@ function saveFix(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('Sauvegarde FIX téléchargée');
+  showToast('Réglages FIX téléchargée');
 }
 
 function saveMonth(){
@@ -931,7 +931,7 @@ function saveMonth(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('Sauvegarde MOIS téléchargée');
+  showToast('Réglages MOIS téléchargée');
 }
 
 function importBackup(event){
@@ -1034,3 +1034,10 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </body>
 </html>
+
+<script>
+// simple inject (safe)
+document.addEventListener("DOMContentLoaded", function(){
+  const sections = document.querySelectorAll("section, div");
+});
+</script>
