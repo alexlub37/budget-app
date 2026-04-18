@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.8.5</title>
+<title>YoNo Budget V6.8.6</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -452,7 +452,7 @@ body{
 body{
   background:
     radial-gradient(circle at top center, var(--yono-accent-soft) 0%, rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, var(--yono-accent-soft) 0%, rgba(255,255,255,0.94) 42%, #ffffff 82%) !important;
+    linear-gradient(180deg, var(--yono-accent-soft) 0%, var(--yono-accent-soft) 38%, rgba(255,255,255,0.96) 72%, #ffffff 92%) !important;
   background-attachment: fixed;
 }
 
@@ -1181,11 +1181,11 @@ if (palette) {
   document.addEventListener('click', function(e){
     const t = e.target;
     if(!t) return;
-    const bg = t.style && (t.style.background || t.style.backgroundColor);
     const isPaletteSquare = t.parentElement && t.parentElement.id === 'colorPalette';
-    if(isPaletteSquare && bg){
-      localStorage.setItem('yonoColor', bg);
-      applyAccent(bg);
+    const chosen = t.getAttribute && t.getAttribute('data-color');
+    if(isPaletteSquare && chosen){
+      localStorage.setItem('yonoColor', chosen);
+      applyAccent(chosen);
       alert('Couleur appliquée à l’app');
     }
   });
