@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.8.2</title>
+<title>YoNo Budget V6.8.5</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -448,20 +448,12 @@ body{
 }
 
 
-/* 🔥 Stronger dynamic background */
+/* V6.8.5 – fond dynamique réellement visible */
 body{
-  background:linear-gradient(
-    180deg,
-    var(--yono-accent-soft) 0%,
-    var(--yono-accent-soft) 25%,
-    #ffffff 80%
-  ) !important;
-}
-
-/* even stronger accent variable */
-:root{
-  --yono-accent-soft:rgba(37,99,235,.25);
-  --yono-accent-border:rgba(37,99,235,.35);
+  background:
+    radial-gradient(circle at top center, var(--yono-accent-soft) 0%, rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, var(--yono-accent-soft) 0%, rgba(255,255,255,0.94) 42%, #ffffff 82%) !important;
+  background-attachment: fixed;
 }
 
 </style>
@@ -1177,8 +1169,8 @@ if (palette) {
   function applyAccent(color){
     if(!color) return;
     document.documentElement.style.setProperty('--yono-accent', color);
-    document.documentElement.style.setProperty('--yono-accent-soft', hexToRgba(color, 0.14));
-    document.documentElement.style.setProperty('--yono-accent-border', hexToRgba(color, 0.22));
+    document.documentElement.style.setProperty('--yono-accent-soft', hexToRgba(color, 0.22));
+    document.documentElement.style.setProperty('--yono-accent-border', hexToRgba(color, 0.34));
   }
 
   const saved = localStorage.getItem('yonoColor');
