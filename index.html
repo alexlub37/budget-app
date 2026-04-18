@@ -447,6 +447,23 @@ body{
   background:linear-gradient(135deg,var(--yono-accent-soft),#ffffff) !important;
 }
 
+
+/* 🔥 Stronger dynamic background */
+body{
+  background:linear-gradient(
+    180deg,
+    var(--yono-accent-soft) 0%,
+    var(--yono-accent-soft) 25%,
+    #ffffff 80%
+  ) !important;
+}
+
+/* even stronger accent variable */
+:root{
+  --yono-accent-soft:rgba(37,99,235,.25);
+  --yono-accent-border:rgba(37,99,235,.35);
+}
+
 </style>
 </head>
 <body>
