@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.9.9</title>
+<title>YoNo Budget V7.0.0</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -1398,6 +1398,7 @@ if (palette) {
 </script>
 
 
+
 <div id="appInfoModal">
   <div class="info-card">
     <img src="logo-yono-budget.png" alt="YoNo Budget" class="info-logo">
@@ -1405,7 +1406,26 @@ if (palette) {
     <div class="small" style="font-size:14px;margin-bottom:16px;">Application personnalisée de gestion de budget</div>
 
     <div class="info-box">
-      <div class="info-row"><div class="small">Version</div><div class="small" style="font-weight:800;">V6.9.9</div></div>
+      <div class="info-row"><div class="small">Version</div><div class="small" style="font-weight:800;">V7.0.0</div></div>
+      <div class="info-row"><div class="small">Statut</div><div class="small" style="font-weight:800;color:#16a34a;">Stable</div></div>
+      <div class="info-row"><div class="small">Créé le</div><div class="small" style="font-weight:800;">01/04/2026</div></div>
+      <div class="info-row"><div class="small">Mise à jour</div><div class="small" id="appInfoToday" style="font-weight:800;">--/--/----</div></div>
+    </div>
+
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:14px 12px;text-align:left;margin-top:12px;">
+      <div class="small" style="font-weight:800;color:#0f172a;margin-bottom:8px;">Détail de la mise à jour</div>
+      <div class="small">• Ajout des dépenses différées</div>
+      <div class="small">• Suppression d’un paiement différé</div>
+      <div class="small">• Accès aux infos via le logo</div>
+      <div class="small">• Amélioration du champ catégorie</div>
+    </div>
+
+    <div class="small" style="margin-top:12px;">Créé par Alexandre</div>
+    <div class="small">Projet personnel</div>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="closeAppInfo()">Fermer</button>
+  </div>
+</div>
+
       <div class="info-row"><div class="small">Statut</div><div class="small" style="font-weight:800;color:#16a34a;">Stable</div></div>
       <div class="info-row"><div class="small">Créé le</div><div class="small" style="font-weight:800;">01/04/2026</div></div>
       <div class="info-row"><div class="small">Aujourd’hui</div><div class="small" id="appInfoToday" style="font-weight:800;">--/--/----</div></div>
