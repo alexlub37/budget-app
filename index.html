@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.1.0</title>
+<title>YoNo Budget V7.2.0</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -508,7 +508,7 @@ body{
 #appInfoModal .info-row:last-child{border-bottom:none}
 
 
-/* Popup infos V7.1.0 */
+/* Popup infos V7.2.0 */
 #appInfoModal{
   display:none;
   position:fixed;
@@ -558,6 +558,98 @@ body{
 }
 #appInfoModal .info-row:last-child{
   border-bottom:none;
+}
+
+
+/* Guide répartition salaire V7.2.0 */
+#summaryGuideTrigger{cursor:pointer}
+#summaryGuideModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  z-index:10001;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+#summaryGuideModal .guide-card{
+  width:100%;
+  max-width:390px;
+  max-height:86vh;
+  overflow:auto;
+  background:rgba(255,255,255,.98);
+  backdrop-filter:blur(8px);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 18px 45px rgba(15,23,42,.18);
+  border:1px solid rgba(255,255,255,.85);
+}
+#summaryGuideModal .guide-title{
+  margin:0 0 8px 0;
+  font-size:28px;
+  letter-spacing:-0.03em;
+}
+#summaryGuideModal .guide-intro{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:12px;
+}
+#summaryGuideModal .guide-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1d4ed8;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:14px;
+}
+#summaryGuideModal .band{
+  border:1px solid #e2e8f0;
+  background:#fff;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:10px;
+}
+#summaryGuideModal .band.active{
+  border-color:#93c5fd;
+  background:#eff6ff;
+  box-shadow:0 8px 18px rgba(37,99,235,.10);
+}
+#summaryGuideModal .band .band-title{
+  font-weight:800;
+  margin-bottom:6px;
+  font-size:17px;
+}
+#summaryGuideModal .band .band-range{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px;
+}
+#summaryGuideModal .band .band-lines{
+  display:grid;
+  gap:4px;
+  font-size:15px;
+}
+#summaryGuideModal .band .band-note{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:8px;
+  line-height:1.35;
+}
+#summaryGuideModal .guide-note{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:12px 14px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.45;
+  margin-top:8px;
 }
 
 </style>
@@ -682,7 +774,7 @@ body{
 </div>
 
 <div id="summary" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-summary"><span class="emoji">📈</span><span>Résumé</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-summary" id="summaryGuideTrigger"><span class="emoji">📈</span><span>Résumé</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
   <div class="card">
     <div class="field">
       <label>Revenu fixe (€)</label>
@@ -1461,11 +1553,11 @@ if (palette) {
     <div class="info-box">
       <div class="info-row">
         <div class="small">Version</div>
-        <div class="small" style="font-weight:800;">V7.1.0</div>
+        <div class="small" style="font-weight:800;">V7.2.0</div>
       </div>
       <div class="info-row">
         <div class="small">Base</div>
-        <div class="small" style="font-weight:800;">V7.0.4</div>
+        <div class="small" style="font-weight:800;">V7.1.0</div>
       </div>
       <div class="info-row">
         <div class="small">Statut</div>
@@ -1528,6 +1620,113 @@ document.addEventListener('DOMContentLoaded', function(){
   if(modal){
     modal.addEventListener('click', function(e){
       if(e.target === modal){ closeAppInfo(); }
+    });
+  }
+});
+</script>
+
+
+<div id="summaryGuideModal">
+  <div class="guide-card">
+    <div class="guide-title">Répartition conseillée</div>
+    <div class="guide-intro">Repères réalistes pour la France actuelle. Clique sur Résumé pour ouvrir cette aide à tout moment.</div>
+    <div class="guide-pill" id="guideSalaryPill">Ton salaire actuel : 0 €</div>
+
+    <div class="band" data-band="low">
+      <div class="band-title">Niveau serré</div>
+      <div class="band-range">Moins de 1 800 € / mois</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 0 à 8 %</div>
+        <div>🛡️ Sécurité : 5 à 12 %</div>
+        <div>🏠 Vie quotidienne : 80 à 95 %</div>
+      </div>
+      <div class="band-note">Priorité : tenir le mois. L’épargne peut rester faible au départ.</div>
+    </div>
+
+    <div class="band" data-band="mid">
+      <div class="band-title">Niveau équilibre</div>
+      <div class="band-range">1 800 à 2 500 € / mois</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 8 à 12 %</div>
+        <div>🛡️ Sécurité : 10 à 15 %</div>
+        <div>🏠 Vie quotidienne : 70 à 80 %</div>
+      </div>
+      <div class="band-note">Niveau moyen réaliste pour construire progressivement un matelas.</div>
+    </div>
+
+    <div class="band" data-band="comfort">
+      <div class="band-title">Niveau confort</div>
+      <div class="band-range">2 500 à 3 500 € / mois</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 12 à 18 %</div>
+        <div>🛡️ Sécurité : 10 à 20 %</div>
+        <div>🏠 Vie quotidienne : 65 à 75 %</div>
+      </div>
+      <div class="band-note">Capacité réelle d’épargne plus solide. Bon niveau pour sécuriser et préparer des projets.</div>
+    </div>
+
+    <div class="band" data-band="high">
+      <div class="band-title">Niveau avancé</div>
+      <div class="band-range">Plus de 3 500 € / mois</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 15 à 30 %</div>
+        <div>🛡️ Sécurité : 15 à 25 %</div>
+        <div>🏠 Vie quotidienne : 50 à 70 %</div>
+      </div>
+      <div class="band-note">Zone favorable pour renforcer sécurité, projets et investissement.</div>
+    </div>
+
+    <div class="guide-note">
+      Ces repères ne changent pas selon tes fixes. Les fixes servent ensuite à vérifier si la répartition est tenable dans la vraie vie.
+      Si tes charges fixes sont très élevées, adapte les pourcentages à la baisse au début.
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:14px" onclick="closeSummaryGuide()">Fermer</button>
+  </div>
+</div>
+
+
+<script>
+function euroSimple(n){
+  return Number(n||0).toLocaleString('fr-FR',{minimumFractionDigits:0, maximumFractionDigits:0}) + ' €';
+}
+function currentSalaryValue(){
+  var input = document.getElementById('inputSalaire');
+  if(input && input.value !== '') return Number(String(input.value).replace(',','.')) || 0;
+  if(typeof data !== 'undefined' && data && typeof data.salary !== 'undefined') return Number(data.salary||0);
+  return 0;
+}
+function salaryBandName(v){
+  if(v < 1800) return 'low';
+  if(v < 2500) return 'mid';
+  if(v < 3500) return 'comfort';
+  return 'high';
+}
+function openSummaryGuide(){
+  var modal = document.getElementById('summaryGuideModal');
+  var pill = document.getElementById('guideSalaryPill');
+  var v = currentSalaryValue();
+  if(pill){ pill.textContent = 'Ton salaire actuel : ' + euroSimple(v); }
+  document.querySelectorAll('#summaryGuideModal .band').forEach(function(el){
+    el.classList.remove('active');
+  });
+  var active = document.querySelector('#summaryGuideModal .band[data-band="' + salaryBandName(v) + '"]');
+  if(active){ active.classList.add('active'); }
+  if(modal){ modal.style.display = 'flex'; }
+}
+function closeSummaryGuide(){
+  var modal = document.getElementById('summaryGuideModal');
+  if(modal){ modal.style.display = 'none'; }
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var trigger = document.getElementById('summaryGuideTrigger');
+  if(trigger){
+    trigger.addEventListener('click', openSummaryGuide);
+  }
+  var modal = document.getElementById('summaryGuideModal');
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === modal){ closeSummaryGuide(); }
     });
   }
 });
