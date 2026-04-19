@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.2.1</title>
+<title>YoNo Budget V7.2.2</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -508,7 +508,7 @@ body{
 #appInfoModal .info-row:last-child{border-bottom:none}
 
 
-/* Popup infos V7.2.1 */
+/* Popup infos V7.2.2 */
 #appInfoModal{
   display:none;
   position:fixed;
@@ -561,7 +561,7 @@ body{
 }
 
 
-/* Guide répartition salaire V7.2.1 */
+/* Guide répartition salaire V7.2.2 */
 #summaryGuideTrigger{cursor:pointer}
 #summaryGuideModal{
   display:none;
@@ -648,6 +648,121 @@ body{
   padding:12px 14px;
   font-size:13px;
   color:var(--muted);
+  line-height:1.45;
+  margin-top:8px;
+}
+
+
+/* Guide répartition salaire + fixes V7.2.2 */
+#summaryGuideTrigger{cursor:pointer}
+#summaryGuideModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  z-index:10001;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+#summaryGuideModal .guide-card{
+  width:100%;
+  max-width:390px;
+  max-height:86vh;
+  overflow:auto;
+  background:rgba(255,255,255,.98);
+  backdrop-filter:blur(8px);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 18px 45px rgba(15,23,42,.18);
+  border:1px solid rgba(255,255,255,.85);
+}
+#summaryGuideModal .guide-title{
+  margin:0 0 8px 0;
+  font-size:28px;
+  letter-spacing:-0.03em;
+}
+#summaryGuideModal .guide-intro{
+  font-size:14px;
+  color:#64748b;
+  margin-bottom:12px;
+  line-height:1.42;
+}
+#summaryGuideModal .guide-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1d4ed8;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:13px;
+  font-weight:800;
+  margin:0 8px 10px 0;
+}
+#summaryGuideModal .guide-reco{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:12px 14px;
+  margin-bottom:12px;
+}
+#summaryGuideModal .guide-reco .guide-label{
+  font-weight:800;
+  color:#0f172a;
+  margin-bottom:6px;
+}
+#summaryGuideModal .guide-reco .guide-main{
+  font-size:15px;
+  line-height:1.45;
+}
+#summaryGuideModal .guide-reco .guide-sub{
+  color:#64748b;
+  font-size:13px;
+  line-height:1.4;
+  margin-top:8px;
+}
+#summaryGuideModal .band{
+  border:1px solid #e2e8f0;
+  background:#fff;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:10px;
+}
+#summaryGuideModal .band.active{
+  border-color:#93c5fd;
+  background:#eff6ff;
+  box-shadow:0 8px 18px rgba(37,99,235,.10);
+}
+#summaryGuideModal .band .band-title{
+  font-weight:800;
+  margin-bottom:6px;
+  font-size:17px;
+}
+#summaryGuideModal .band .band-range{
+  color:#64748b;
+  font-size:13px;
+  margin-bottom:8px;
+}
+#summaryGuideModal .band .band-lines{
+  display:grid;
+  gap:4px;
+  font-size:15px;
+}
+#summaryGuideModal .band .band-note{
+  color:#64748b;
+  font-size:13px;
+  margin-top:8px;
+  line-height:1.35;
+}
+#summaryGuideModal .guide-note{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:12px 14px;
+  font-size:13px;
+  color:#64748b;
   line-height:1.45;
   margin-top:8px;
 }
@@ -1553,11 +1668,11 @@ if (palette) {
     <div class="info-box">
       <div class="info-row">
         <div class="small">Version</div>
-        <div class="small" style="font-weight:800;">V7.2.1</div>
+        <div class="small" style="font-weight:800;">V7.2.2</div>
       </div>
       <div class="info-row">
         <div class="small">Base</div>
-        <div class="small" style="font-weight:800;">V7.2.0</div>
+        <div class="small" style="font-weight:800;">V7.2.1</div>
       </div>
       <div class="info-row">
         <div class="small">Statut</div>
@@ -1577,9 +1692,9 @@ if (palette) {
       <div class="small" style="font-weight:800;color:#0f172a;margin-bottom:8px;">
         Détail de la mise à jour
       </div>
-      <div class="small">• Popup info version propre</div>
-      <div class="small">• Base affichée dans la popup</div>
-      <div class="small">• Nettoyage complet du système précédent</div>
+      <div class="small">• Aide répartition selon salaire et fixes</div>
+      <div class="small">• Recommandation personnalisée par niveau de charges</div>
+      <div class="small">• Mises à jour clairement notées dans la popup</div>
     </div>
 
     <div class="small" style="margin-top:12px;">Créé par Alexandre</div>
@@ -1626,20 +1741,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 
-<div id="summaryGuideModal">
-  <div class="guide-card">
-    <div class="guide-title">Répartition conseillée</div>
-    <div class="guide-intro">Repères réalistes pour la France actuelle. Clique sur Résumé pour ouvrir cette aide à tout moment.</div>
-    <div class="guide-pill" id="guideSalaryPill">Ton salaire actuel : 0 €</div>
 
-    <div class="band" data-band="low">
-      <div class="band-title">Niveau serré</div>
-      <div class="band-range">Moins de 1 800 € / mois</div>
-      <div class="band-lines">
-        <div>💰 Épargne : 0 à 8 %</div>
-        <div>🛡️ Sécurité : 5 à 12 %</div>
-        <div>🏠 Vie quotidienne : 80 à 95 %</div>
-      </div>
       <div class="band-note">Priorité : tenir le mois. L’épargne peut rester faible au départ.</div>
     </div>
 
@@ -1712,6 +1814,189 @@ function openSummaryGuide(){
   });
   var active = document.querySelector('#summaryGuideModal .band[data-band="' + salaryBandName(v) + '"]');
   if(active){ active.classList.add('active'); }
+  if(modal){ modal.style.display = 'flex'; }
+}
+function closeSummaryGuide(){
+  var modal = document.getElementById('summaryGuideModal');
+  if(modal){ modal.style.display = 'none'; }
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var trigger = document.getElementById('summaryGuideTrigger');
+  if(trigger){
+    trigger.addEventListener('click', openSummaryGuide);
+  }
+  var modal = document.getElementById('summaryGuideModal');
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === modal){ closeSummaryGuide(); }
+    });
+  }
+});
+</script>
+
+
+<div id="summaryGuideModal">
+  <div class="guide-card">
+    <div class="guide-title">Répartition conseillée</div>
+    <div class="guide-intro">
+      Cette aide prend en compte ton salaire et le poids de tes fixes.
+      Ce sont des repères d'information, pas une obligation.
+      Chacun adapte ses pourcentages selon sa réalité.
+    </div>
+
+    <div class="guide-pill" id="guideSalaryPill">Salaire : 0 €</div>
+    <div class="guide-pill" id="guideFixesPill">Fixes : 0 €</div>
+    <div class="guide-pill" id="guideRatioPill">Poids des fixes : 0 %</div>
+
+    <div class="guide-reco">
+      <div class="guide-label">Conseil pour toi</div>
+      <div class="guide-main" id="guideRecoText">Épargne : -- % • Sécurité : -- % • Vie quotidienne : -- %</div>
+      <div class="guide-sub" id="guideRecoNote">Entre ton salaire pour obtenir un repère plus précis.</div>
+    </div>
+
+    <div class="band" data-band="high-fixes">
+      <div class="band-title">Charges fixes très élevées</div>
+      <div class="band-range">Fixes supérieurs à 70 % du salaire</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 0 à 3 %</div>
+        <div>🛡️ Sécurité : 3 à 5 %</div>
+        <div>🏠 Vie quotidienne : 92 à 97 %</div>
+      </div>
+      <div class="band-note">Priorité : tenir le mois et garder un peu d'air.</div>
+    </div>
+
+    <div class="band" data-band="tight">
+      <div class="band-title">Équilibre fragile</div>
+      <div class="band-range">Fixes entre 60 et 70 % du salaire</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 3 à 5 %</div>
+        <div>🛡️ Sécurité : 4 à 6 %</div>
+        <div>🏠 Vie quotidienne : 89 à 93 %</div>
+      </div>
+      <div class="band-note">Commencer petit, mais régulièrement.</div>
+    </div>
+
+    <div class="band" data-band="balanced">
+      <div class="band-title">Équilibre réaliste</div>
+      <div class="band-range">Fixes entre 50 et 60 % du salaire</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 5 à 7 %</div>
+        <div>🛡️ Sécurité : 5 à 8 %</div>
+        <div>🏠 Vie quotidienne : 85 à 90 %</div>
+      </div>
+      <div class="band-note">Bon repère pour beaucoup de foyers aujourd'hui.</div>
+    </div>
+
+    <div class="band" data-band="comfortable">
+      <div class="band-title">Confort correct</div>
+      <div class="band-range">Fixes entre 40 et 50 % du salaire</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 6 à 10 %</div>
+        <div>🛡️ Sécurité : 6 à 10 %</div>
+        <div>🏠 Vie quotidienne : 80 à 88 %</div>
+      </div>
+      <div class="band-note">Tu peux construire plus sereinement ton matelas.</div>
+    </div>
+
+    <div class="band" data-band="strong">
+      <div class="band-title">Confort élevé</div>
+      <div class="band-range">Fixes inférieurs à 40 % du salaire</div>
+      <div class="band-lines">
+        <div>💰 Épargne : 10 à 15 %</div>
+        <div>🛡️ Sécurité : 8 à 12 %</div>
+        <div>🏠 Vie quotidienne : 73 à 82 %</div>
+      </div>
+      <div class="band-note">Situation favorable pour sécuriser et avancer plus vite.</div>
+    </div>
+
+    <div class="guide-note">
+      Même salaire avec moins de fixes = capacité d'épargne plus forte.
+      Même salaire avec plus de fixes = recommandation plus prudente.
+      Cette aide sert à donner une direction, pas à imposer un choix.
+    </div>
+
+    <button class="btn btn-primary" style="margin-top:14px" onclick="closeSummaryGuide()">Fermer</button>
+  </div>
+</div>
+
+
+<script>
+function euroSimple(n){
+  return Number(n||0).toLocaleString('fr-FR',{minimumFractionDigits:0, maximumFractionDigits:0}) + ' €';
+}
+function currentSalaryValue(){
+  var input = document.getElementById('inputSalaire');
+  if(input && input.value !== ''){
+    return Number(String(input.value).replace(',','.')) || 0;
+  }
+  if(typeof data !== 'undefined' && data && typeof data.salary !== 'undefined'){
+    return Number(data.salary||0);
+  }
+  return 0;
+}
+function currentFixesValue(){
+  if(typeof data !== 'undefined' && data && Array.isArray(data.fixes)){
+    return data.fixes.reduce(function(sum, f){
+      return sum + Number(f.montant || 0);
+    }, 0);
+  }
+  return 0;
+}
+function profileFromSalaryAndFixes(salary, fixes){
+  if(salary <= 0){
+    return {
+      band:'balanced',
+      epargne:'5 à 7',
+      securite:'5 à 8',
+      vie:'85 à 90',
+      note:'Entre ton salaire pour obtenir une estimation plus précise.'
+    };
+  }
+  var ratio = fixes / salary;
+  if(ratio > 0.70){
+    return {band:'high-fixes', epargne:'0 à 3', securite:'3 à 5', vie:'92 à 97', note:'Tes fixes sont très élevés. Priorité : tenir le mois.'};
+  }
+  if(ratio > 0.60){
+    return {band:'tight', epargne:'3 à 5', securite:'4 à 6', vie:'89 à 93', note:'Situation serrée : commence petit et régulier.'};
+  }
+  if(ratio > 0.50){
+    return {band:'balanced', epargne:'5 à 7', securite:'5 à 8', vie:'85 à 90', note:'Repère réaliste pour beaucoup de foyers.'};
+  }
+  if(ratio > 0.40){
+    return {band:'comfortable', epargne:'6 à 10', securite:'6 à 10', vie:'80 à 88', note:'Tu peux construire une épargne plus régulière.'};
+  }
+  return {band:'strong', epargne:'10 à 15', securite:'8 à 12', vie:'73 à 82', note:'Situation favorable pour sécuriser et avancer plus vite.'};
+}
+function openSummaryGuide(){
+  var modal = document.getElementById('summaryGuideModal');
+  var salary = currentSalaryValue();
+  var fixes = currentFixesValue();
+  var ratio = salary > 0 ? Math.round((fixes / salary) * 100) : 0;
+  var profile = profileFromSalaryAndFixes(salary, fixes);
+
+  var salaryPill = document.getElementById('guideSalaryPill');
+  var fixesPill = document.getElementById('guideFixesPill');
+  var ratioPill = document.getElementById('guideRatioPill');
+  var recoText = document.getElementById('guideRecoText');
+  var recoNote = document.getElementById('guideRecoNote');
+
+  if(salaryPill){ salaryPill.textContent = 'Salaire : ' + euroSimple(salary); }
+  if(fixesPill){ fixesPill.textContent = 'Fixes : ' + euroSimple(fixes); }
+  if(ratioPill){ ratioPill.textContent = 'Poids des fixes : ' + ratio + ' %'; }
+
+  if(recoText){
+    recoText.textContent = 'Épargne : ' + profile.epargne + ' % • Sécurité : ' + profile.securite + ' % • Vie quotidienne : ' + profile.vie + ' %';
+  }
+  if(recoNote){
+    recoNote.textContent = profile.note;
+  }
+
+  document.querySelectorAll('#summaryGuideModal .band').forEach(function(el){
+    el.classList.remove('active');
+  });
+  var active = document.querySelector('#summaryGuideModal .band[data-band="' + profile.band + '"]');
+  if(active){ active.classList.add('active'); }
+
   if(modal){ modal.style.display = 'flex'; }
 }
 function closeSummaryGuide(){
