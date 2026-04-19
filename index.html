@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.8.8</title>
+<title>YoNo Budget V6.9.0</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -362,100 +362,6 @@ label{
   .header-chip{padding:9px 12px}
 }
 
-
-:root{
-  --yono-accent:#2563eb;
-  --yono-accent-soft:rgba(37,99,235,.14);
-  --yono-accent-border:rgba(37,99,235,.22);
-}
-.btn-primary{
-  background:var(--yono-accent) !important;
-  color:#fff !important;
-}
-.nav button.active{
-  color:var(--yono-accent) !important;
-}
-.nav button.active{
-  background:var(--yono-accent-soft) !important;
-}
-#home .grid .btn{
-  border:1px solid var(--yono-accent-border) !important;
-  box-shadow:0 6px 14px rgba(15,23,42,.05);
-}
-#home .grid .btn:hover,
-#home .grid .btn:active{
-  outline:none;
-  border-color:var(--yono-accent) !important;
-}
-.header-chip.chip-home,
-.header-chip.chip-add,
-.header-chip.chip-fixed,
-.header-chip.chip-view,
-.header-chip.chip-summary,
-.header-chip.chip-backup{
-  border-color:var(--yono-accent-border) !important;
-}
-.header-chip.chip-home{
-  background:var(--yono-accent-soft) !important;
-  color:var(--yono-accent) !important;
-}
-#home .sticky-balance{
-  border-color:var(--yono-accent-border) !important;
-}
-#home .sticky-balance .big{
-  color:var(--yono-accent) !important;
-}
-#backup .card .btn,
-#backup .btn{
-  border:1px solid var(--yono-accent-border);
-}
-
-
-/* 🎨 Dynamic background + stronger theme */
-body{
-  background:linear-gradient(180deg,var(--yono-accent-soft) 0%, #ffffff 60%) !important;
-}
-
-/* Titles */
-.header-chip{
-  background:var(--yono-accent-soft) !important;
-  color:var(--yono-accent) !important;
-  border:1px solid var(--yono-accent-border) !important;
-}
-
-/* Cards */
-.card{
-  border:1px solid var(--yono-accent-border);
-}
-
-/* Buttons */
-.btn{
-  border-color:var(--yono-accent-border) !important;
-}
-.btn-primary{
-  background:var(--yono-accent) !important;
-}
-
-/* Active tab stronger */
-.nav button.active{
-  background:var(--yono-accent-soft) !important;
-  color:var(--yono-accent) !important;
-}
-
-/* Sticky balance stronger */
-#home .sticky-balance{
-  background:linear-gradient(135deg,var(--yono-accent-soft),#ffffff) !important;
-}
-
-
-/* V6.8.5 – fond dynamique réellement visible */
-body{
-  background:
-    radial-gradient(circle at top center, var(--yono-accent-soft) 0%, rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, var(--yono-accent-soft) 0%, var(--yono-accent-soft) 38%, rgba(255,255,255,0.96) 72%, #ffffff 92%) !important;
-  background-attachment: fixed;
-}
-
 </style>
 </head>
 <body>
@@ -514,7 +420,7 @@ body{
     </div>
     <div class="field">
       <label>Type</label>
-      <select id="addType">
+      <select id="addType" onchange="toggleDeferredFields()">
         <option>Dépense</option>
         <option>Revenu</option>
       </select>
@@ -523,6 +429,18 @@ body{
       <label>Catégorie</label>
       <select id="addCategory"></select>
     </div>
+    <div class="field">
+      <label>Moment du retrait</label>
+      <select id="addTiming" onchange="toggleDeferredFields()">
+        <option value="immediate">Immédiat</option>
+        <option value="deferred">Différé</option>
+      </select>
+    </div>
+    <div class="field" id="deferredDateWrap" style="display:none">
+      <label>Date prévue de retrait</label>
+      <input class="input" id="addDeferredDate" type="date">
+    </div>
+    <div class="small" id="deferredHelp" style="display:none;margin-top:-2px;margin-bottom:10px">La dépense sera enregistrée maintenant, mais n’impactera le budget qu’à la date prévue.</div>
     <div class="field">
       <label>Nouvelle catégorie (option)</label>
       <input class="input" id="newCategoryInput" placeholder="Ex : Chiens">
@@ -605,6 +523,11 @@ body{
   </div>
 
   <div class="card">
+    <div class="small" style="margin-bottom:8px">Dépenses à venir</div>
+    <div id="upcomingList"></div>
+  </div>
+
+  <div class="card">
     <div class="small" style="margin-bottom:8px">Opérations du mois</div>
     <div id="opsList"></div>
   </div>
@@ -683,6 +606,7 @@ function defaultData(){
     pctSecu:20,
     fixes:[],
     operations:[],
+    scheduledOperations:[],
     categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
   };
 }
@@ -693,7 +617,12 @@ function loadData(){
     if(!raw) return defaultData();
     const parsed = JSON.parse(raw);
     const base = defaultData();
-    return {...base, ...parsed, categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories};
+    return {
+      ...base,
+      ...parsed,
+      scheduledOperations:Array.isArray(parsed.scheduledOperations) ? parsed.scheduledOperations : [],
+      categories:(parsed.categories && parsed.categories.length)?parsed.categories:base.categories
+    };
   }catch(e){
     return defaultData();
   }
@@ -701,12 +630,47 @@ function loadData(){
 let data = loadData();
 
 function saveData(){
+  processDeferredOperations();
   localStorage.setItem(KEY, JSON.stringify(data));
   renderAll();
 }
 
 function euro(n){
   return Number(n||0).toLocaleString('fr-FR',{minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+}
+
+function todayStr(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function formatDateFR(v){
+  if(!v) return "";
+  const parts = String(v).split("-");
+  if(parts.length !== 3) return v;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function processDeferredOperations(){
+  if(!Array.isArray(data.scheduledOperations) || !data.scheduledOperations.length) return;
+  const today = todayStr();
+  const due = data.scheduledOperations.filter(o => o && o.dueDate && o.dueDate <= today);
+  if(!due.length) return;
+  due.forEach(o => {
+    data.operations.unshift({
+      id: Date.now() + Math.random(),
+      desc: o.desc,
+      montant: Number(o.montant||0),
+      type: "Dépense",
+      category: o.category,
+      fromDeferred: true,
+      originalDueDate: o.dueDate
+    });
+  });
+  data.scheduledOperations = data.scheduledOperations.filter(o => !(o && o.dueDate && o.dueDate <= today));
 }
 
 function totals(){
@@ -793,6 +757,8 @@ function saveEntry(){
   const desc = (document.getElementById("addDesc").value || "").trim();
   const amount = parseFloat(String(document.getElementById("addAmount").value || "").replace(",", "."));
   const type = document.getElementById("addType").value;
+  const timing = document.getElementById("addTiming").value;
+  const deferredDate = document.getElementById("addDeferredDate").value;
   const selectedCategory = document.getElementById("addCategory").value;
   const newCategory = (document.getElementById("newCategoryInput").value || "").trim();
 
@@ -809,14 +775,35 @@ function saveEntry(){
     return;
   }
 
-  data.operations.unshift({
-    id: Date.now() + Math.random(),
-    desc, montant: amount, type, category
-  });
+  if(type === "Dépense" && timing === "deferred"){
+    if(!deferredDate){
+      alert("Choisis une date prévue de retrait.");
+      return;
+    }
+    data.scheduledOperations.unshift({
+      id: Date.now() + Math.random(),
+      desc,
+      montant: amount,
+      type: "Dépense",
+      category,
+      dueDate: deferredDate,
+      createdAt: todayStr()
+    });
+    showToast("Dépense différée enregistrée");
+  } else {
+    data.operations.unshift({
+      id: Date.now() + Math.random(),
+      desc, montant: amount, type, category
+    });
+    showToast(type === "Revenu" ? "Revenu ajouté" : "Dépense ajoutée");
+  }
 
   document.getElementById("addDesc").value = "";
   document.getElementById("addAmount").value = "";
   document.getElementById("newCategoryInput").value = "";
+  document.getElementById("addTiming").value = "immediate";
+  document.getElementById("addDeferredDate").value = "";
+  toggleDeferredFields();
   saveData();
 }
 
@@ -893,8 +880,19 @@ function renderHome(){
   document.getElementById("revenusHome").textContent = euro(t.revenus);
 }
 
+function toggleDeferredFields(){
+  const timingEl = document.getElementById("addTiming");
+  const wrap = document.getElementById("deferredDateWrap");
+  const help = document.getElementById("deferredHelp");
+  const type = document.getElementById("addType") ? document.getElementById("addType").value : "Dépense";
+  const isDeferred = timingEl && timingEl.value === "deferred" && type === "Dépense";
+  if(wrap) wrap.style.display = isDeferred ? "" : "none";
+  if(help) help.style.display = isDeferred ? "" : "none";
+}
+
 function renderAdd(){
   fillCategorySelect();
+  toggleDeferredFields();
 }
 
 function renderFixed(){
@@ -1063,6 +1061,7 @@ function importBackup(event){
           ...imported,
           fixes: Array.isArray(imported.fixes) ? imported.fixes : [],
           operations: Array.isArray(imported.operations) ? imported.operations : [],
+          scheduledOperations: Array.isArray(imported.scheduledOperations) ? imported.scheduledOperations : [],
           categories: Array.isArray(imported.categories) && imported.categories.length ? imported.categories : base.categories
         };
       }
@@ -1090,6 +1089,7 @@ function renderBackup(){
 }
 
 function renderAll(){
+  processDeferredOperations();
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(data.tab || "home").classList.add("active");
   document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === (data.tab || "home")));
@@ -1144,54 +1144,13 @@ if (palette) {
     btn.style.borderRadius="8px";
     btn.style.background=c;
     btn.style.cursor="pointer";
-    btn.setAttribute("data-color", c);
     btn.onclick = ()=>{
       localStorage.setItem("yonoColor", c);
-      if (window.applyAccent) { window.applyAccent(c); }
-      alert("Couleur appliquée à l’app");
+      alert("Couleur principale mise à jour !");
     };
     palette.appendChild(btn);
   });
 }
-</script>
-
-
-<script>
-(function(){
-  function hexToRgba(hex, alpha){
-    if(!hex) return 'rgba(37,99,235,' + alpha + ')';
-    const h = hex.replace('#','');
-    const full = h.length === 3 ? h.split('').map(x=>x+x).join('') : h;
-    const r = parseInt(full.substring(0,2), 16);
-    const g = parseInt(full.substring(2,4), 16);
-    const b = parseInt(full.substring(4,6), 16);
-    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
-  }
-
-  window.applyAccent = function(color){
-    if(!color) return;
-    document.documentElement.style.setProperty('--yono-accent', color);
-    document.documentElement.style.setProperty('--yono-accent-soft', hexToRgba(color, 0.22));
-    document.documentElement.style.setProperty('--yono-accent-border', hexToRgba(color, 0.34));
-  }
-
-  const saved = localStorage.getItem('yonoColor');
-  if(saved){
-    applyAccent(saved);
-  }
-
-  document.addEventListener('click', function(e){
-    const t = e.target;
-    if(!t) return;
-    const isPaletteSquare = t.parentElement && t.parentElement.id === 'colorPalette';
-    const chosen = t.getAttribute && t.getAttribute('data-color');
-    if(isPaletteSquare && chosen){
-      localStorage.setItem('yonoColor', chosen);
-      applyAccent(chosen);
-      alert('Couleur appliquée à l’app');
-    }
-  });
-})();
 </script>
 
 </body>
