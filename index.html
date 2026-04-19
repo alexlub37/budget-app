@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.9.4</title>
+<title>YoNo Budget V6.9.7</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -455,6 +455,57 @@ body{
     linear-gradient(180deg, var(--yono-accent-soft) 0%, var(--yono-accent-soft) 38%, rgba(255,255,255,0.96) 72%, #ffffff 92%) !important;
   background-attachment: fixed;
 }
+
+
+/* App info modal */
+#appInfoModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  z-index:10000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+#appInfoModal .info-card{
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(8px);
+  width:100%;
+  max-width:320px;
+  border-radius:22px;
+  padding:22px;
+  text-align:center;
+  box-shadow:0 18px 45px rgba(15,23,42,.18);
+  border:1px solid rgba(255,255,255,.8);
+}
+#appInfoModal .info-logo{
+  width:72px;
+  height:72px;
+  border-radius:20px;
+  box-shadow:0 10px 24px rgba(15,23,42,.14);
+  margin-bottom:14px;
+}
+#appInfoModal .info-title{
+  margin:0 0 6px 0;
+  font-size:26px;
+  letter-spacing:-0.03em;
+}
+#appInfoModal .info-box{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:14px 12px;
+  text-align:left;
+}
+#appInfoModal .info-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid #e2e8f0;
+}
+#appInfoModal .info-row:last-child{border-bottom:none}
 
 </style>
 </head>
@@ -1330,6 +1381,59 @@ if (palette) {
     }
   });
 })();
+</script>
+
+
+<div id="appInfoModal">
+  <div class="info-card">
+    <img src="logo-yono-budget.png" alt="YoNo Budget" class="info-logo">
+    <h3 class="info-title">YoNo Budget</h3>
+    <div class="small" style="font-size:14px;margin-bottom:16px;">Application personnalisée de gestion de budget</div>
+
+    <div class="info-box">
+      <div class="info-row"><div class="small">Version</div><div class="small" style="font-weight:800;">V6.9.7</div></div>
+      <div class="info-row"><div class="small">Statut</div><div class="small" style="font-weight:800;color:#16a34a;">Stable</div></div>
+      <div class="info-row"><div class="small">Créé le</div><div class="small" style="font-weight:800;">01/04/2026</div></div>
+      <div class="info-row"><div class="small">Aujourd’hui</div><div class="small" id="appInfoToday" style="font-weight:800;">--/--/----</div></div>
+      <div class="info-row"><div class="small">Créé par</div><div class="small" style="font-weight:800;">Alexandre</div></div>
+    </div>
+
+    <div class="small" style="margin-top:12px;">Projet personnel</div>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="closeAppInfo()">Fermer</button>
+  </div>
+</div>
+
+
+<script>
+function appInfoTodayFR(){
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2,'0');
+  const month = String(d.getMonth()+1).padStart(2,'0');
+  const year = d.getFullYear();
+  return day + '/' + month + '/' + year;
+}
+function openAppInfo(){
+  const modal = document.getElementById('appInfoModal');
+  const today = document.getElementById('appInfoToday');
+  if(today) today.textContent = appInfoTodayFR();
+  if(modal) modal.style.display = 'flex';
+}
+function closeAppInfo(){
+  const modal = document.getElementById('appInfoModal');
+  if(modal) modal.style.display = 'none';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.header-logo').forEach(function(logo){
+    logo.style.cursor = 'pointer';
+    logo.addEventListener('click', openAppInfo);
+  });
+  const modal = document.getElementById('appInfoModal');
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === modal) closeAppInfo();
+    });
+  }
+});
 </script>
 
 </body>
