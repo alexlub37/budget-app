@@ -3,50 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YoNo Budget V7.2.4</title>
+<title>YoNo Budget V7.2.2</title>
+
 <style>
-body{font-family:Arial;background:#f3f6fb;margin:0;padding:20px;}
-.card{background:white;border-radius:20px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,0.1);}
-h1{margin-top:0;}
-.badge{display:inline-block;padding:6px 12px;border-radius:20px;background:#22c55e;color:white;font-weight:bold;}
-.section{margin-top:20px;}
+body{font-family:-apple-system;background:#f3f6fb;margin:0;padding:20px;}
+.card{background:white;border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 10px 25px rgba(0,0,0,0.08);}
+h2{margin:0 0 10px;}
+.row{display:flex;justify-content:space-between;margin:6px 0;}
+.reco{margin-top:15px;padding:15px;border-radius:15px;background:#f1f5f9;}
+.reco div{margin:6px 0;font-weight:bold;}
+.green{color:#16a34a;}
+.orange{color:#ea580c;}
+.blue{color:#2563eb;}
+.small{font-size:12px;color:#666;margin-top:8px;}
 </style>
 </head>
+
 <body>
 
 <div class="card">
-<h1>YoNo Budget</h1>
-<div class="badge">V7.2.4 CLEAN</div>
+<h2>Résumé</h2>
 
-<div class="section">
-<strong>Version :</strong> V7.2.4<br>
-<strong>Base :</strong> V7.2.3<br>
-<strong>Statut :</strong> Stable<br>
-<strong>Mise à jour :</strong> 19/04/2026
+<div class="row"><span>Salaire</span><span id="salaire">0 €</span></div>
+<div class="row"><span>Fixes</span><span id="fixes">0 €</span></div>
+<div class="row"><span>Poids fixes</span><span id="ratio">0 %</span></div>
+
+<div class="reco">
+<div id="epargne" class="green"></div>
+<div id="securite" class="orange"></div>
+<div id="vie" class="blue"></div>
+
+<div class="small">
+Ces valeurs sont des repères basés sur ton salaire et tes charges fixes.  
+Tu peux les adapter librement selon ta situation.
 </div>
-
-<div class="section">
-<h3>Détail de la mise à jour</h3>
-<ul>
-<li>Nettoyage complet des anciennes cartographies</li>
-<li>Recommandation basée sur salaire et fixes uniquement</li>
-<li>Correction affichage mises à jour</li>
-</ul>
-</div>
-
-<div class="section">
-<h3>Recommandation (exemple)</h3>
-<p>
-Épargne : 5 à 10 %<br>
-Sécurité : 5 à 10 %<br>
-Vie quotidienne : reste
-</p>
-<p style="font-size:12px;color:#555;">
-Ces valeurs sont indicatives. À adapter selon ta situation.
-</p>
 </div>
 
 </div>
+
+<script>
+
+function calcul(){
+
+let salaire = Number(localStorage.getItem("salary")) || 0;
+let fixes = Number(localStorage.getItem("fixes")) || 0;
+
+let ratio = salaire > 0 ? Math.round((fixes / salaire) * 100) : 0;
+
+let epargnePct, securitePct;
+
+if(ratio > 70){
+  epargnePct = 2;
+  securitePct = 3;
+}
+else if(ratio > 60){
+  epargnePct = 4;
+  securitePct = 5;
+}
+else if(ratio > 50){
+  epargnePct = 6;
+  securitePct = 6;
+}
+else if(ratio > 40){
+  epargnePct = 8;
+  securitePct = 7;
+}
+else{
+  epargnePct = 12;
+  securitePct = 10;
+}
+
+let epargne = Math.round(salaire * epargnePct / 100);
+let securite = Math.round(salaire * securitePct / 100);
+let vie = salaire - epargne - securite;
+
+document.getElementById("salaire").innerText = salaire + " €";
+document.getElementById("fixes").innerText = fixes + " €";
+document.getElementById("ratio").innerText = ratio + " %";
+
+document.getElementById("epargne").innerText = "💰 Épargne : " + epargne + " € (" + epargnePct + "%)";
+document.getElementById("securite").innerText = "🛡️ Sécurité : " + securite + " € (" + securitePct + "%)";
+document.getElementById("vie").innerText = "🏠 Vie quotidienne : " + vie + " €";
+
+}
+
+calcul();
+
+</script>
 
 </body>
 </html>
