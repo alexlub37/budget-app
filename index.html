@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.9.7</title>
+<title>YoNo Budget V6.9.8</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -570,7 +570,7 @@ body{
         <option>Revenu</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field" id="addCategoryWrap">
       <label>Catégorie</label>
       <select id="addCategory"></select>
     </div>
@@ -752,7 +752,7 @@ function defaultData(){
     fixes:[],
     operations:[],
     scheduledOperations:[],
-    categories:["Courses","Boulangerie","Snack","Carburant","Santé","Virement","Divers","Fixes","Abonnements","Revenus"]
+    categories:[]
   };
 }
 
@@ -884,8 +884,13 @@ function confirmQuickAdd(){
 function fillCategorySelect(){
   const sel = document.getElementById("addCategory");
   if(!sel) return;
-  const cats = (data.categories || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
-  sel.innerHTML = cats.map(c => `<option>${c}</option>`).join("");
+  sel.innerHTML = "";
+  (data.categories || []).forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    sel.appendChild(opt);
+  });
 }
 
 function fillCategorySelect(id, selected){
@@ -940,7 +945,7 @@ function saveEntry(){
     document.getElementById("addDesc").value = "";
     document.getElementById("addAmount").value = "";
     document.getElementById("newCategoryInput").value = "";
-    document.getElementById("addCategory").selectedIndex = 0;
+    if(document.getElementById("addCategory").options.length){ document.getElementById("addCategory").selectedIndex = 0; }
     document.getElementById("addType").value = "Dépense";
     if(document.getElementById("addTiming")) document.getElementById("addTiming").value = "immediate";
     if(document.getElementById("addDeferredDate")) document.getElementById("addDeferredDate").value = "";
@@ -962,7 +967,7 @@ function saveEntry(){
   document.getElementById("addDesc").value = "";
   document.getElementById("addAmount").value = "";
   document.getElementById("newCategoryInput").value = "";
-  document.getElementById("addCategory").selectedIndex = 0;
+  if(document.getElementById("addCategory").options.length){ document.getElementById("addCategory").selectedIndex = 0; }
   document.getElementById("addType").value = "Dépense";
   if(document.getElementById("addTiming")) document.getElementById("addTiming").value = "immediate";
   if(document.getElementById("addDeferredDate")) document.getElementById("addDeferredDate").value = "";
@@ -1058,8 +1063,17 @@ function toggleDeferredFields(){
   if(help) help.style.display = show ? "" : "none";
 }
 
+function updateCategoryVisibility(){
+  const wrap = document.getElementById("addCategoryWrap");
+  const select = document.getElementById("addCategory");
+  if(!wrap || !select) return;
+  const options = Array.from(select.options || []).filter(o => (o.value || "").trim() !== "");
+  wrap.style.display = options.length ? "" : "none";
+}
+
 function renderAdd(){
   fillCategorySelect();
+  updateCategoryVisibility();
   toggleDeferredFields();
 }
 
@@ -1391,7 +1405,7 @@ if (palette) {
     <div class="small" style="font-size:14px;margin-bottom:16px;">Application personnalisée de gestion de budget</div>
 
     <div class="info-box">
-      <div class="info-row"><div class="small">Version</div><div class="small" style="font-weight:800;">V6.9.7</div></div>
+      <div class="info-row"><div class="small">Version</div><div class="small" style="font-weight:800;">V6.9.8</div></div>
       <div class="info-row"><div class="small">Statut</div><div class="small" style="font-weight:800;color:#16a34a;">Stable</div></div>
       <div class="info-row"><div class="small">Créé le</div><div class="small" style="font-weight:800;">01/04/2026</div></div>
       <div class="info-row"><div class="small">Aujourd’hui</div><div class="small" id="appInfoToday" style="font-weight:800;">--/--/----</div></div>
