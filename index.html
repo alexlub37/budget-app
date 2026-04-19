@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.9.1</title>
+<title>YoNo Budget V6.9.2</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -1003,39 +1003,59 @@ function renderView(){
 }
 
 function renderSummary(){
-  const t = totals();
-  document.getElementById("inputSalaire").value = t.salaire;
-  document.getElementById("inputPctEpargne").value = t.pctEpargne;
-  document.getElementById("inputPctSecu").value = t.pctSecu;
-  document.getElementById("inputPctVie").value = t.pctVie;
-  document.getElementById("pctInfo").textContent = "La vie quotidienne est calculée automatiquement : 100% - épargne - sécurité.";
-  document.getElementById("sumSalaire").textContent = euro(t.salaire);
-  document.getElementById("sumEpargne").textContent = euro(t.epargne);
-  document.getElementById("sumSecu").textContent = euro(t.secu);
-  document.getElementById("sumBudget").textContent = euro(t.budget);
-  document.getElementById("sumPctVie").textContent = t.pctVie + " %";
+  const salaire = Number(data.salary||0);
+  const epargne = salaire * (Number(data.pctEpargne||0)/100);
+  const secu = salaire * (Number(data.pctSecu||0)/100);
+  const budgetMois = salaire - epargne - secu;
+
+  const ops = Array.isArray(data.operations) ? data.operations : [];
+  const depenses = ops.filter(o => o.type === "Dépense").reduce((s,o)=>s+Number(o.montant||0),0);
+  const revenus = ops.filter(o => o.type === "Revenu").reduce((s,o)=>s+Number(o.montant||0),0);
+  const fixes = ops.filter(o => o.category === "Fixes" || o.category === "Abonnements").reduce((s,o)=>s+Number(o.montant||0),0);
+  const variables = depenses - fixes;
+  const reste = budgetMois - depenses + revenus;
+  const pctVie = budgetMois > 0 ? Math.round((reste / budgetMois) * 100) : 0;
+
+  document.getElementById("sumSalaire").textContent = euro(salaire);
+  document.getElementById("sumEpargne").textContent = euro(epargne);
+  document.getElementById("sumSecu").textContent = euro(secu);
+  document.getElementById("sumBudget").textContent = euro(budgetMois);
+  document.getElementById("sumPctVie").textContent = `${pctVie} %`;
 
   const byCat = {};
-  data.fixes.forEach(f => { byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant||0); });
-  data.operations.forEach(o => { byCat[o.category] = (byCat[o.category] || 0) + (o.type==="Revenu" ? Number(o.montant||0) : -Number(o.montant||0)); });
+  ops.forEach(o => {
+    const key = o.category || "Divers";
+    const sign = o.type === "Revenu" ? 1 : -1;
+    byCat[key] = (byCat[key] || 0) + sign * Number(o.montant || 0);
+  });
 
-  document.getElementById("catSummary").innerHTML = Object.keys(byCat).sort().map(cat => `
+  document.getElementById("catList").innerHTML = Object.keys(byCat).map(k => `
     <div class="row">
-      <div>${cat}</div>
-      <div class="amount ${byCat[cat] >= 0 ? 'good' : 'bad'}">${euro(byCat[cat])}</div>
+      <div>${k}</div>
+      <div class="amount ${byCat[k] >= 0 ? 'good' : 'bad'}">${byCat[k] >= 0 ? '' : '-'}${euro(Math.abs(byCat[k]))}</div>
     </div>
   `).join("") || `<div class="small">Aucune donnée.</div>`;
 
-  document.getElementById("opsList").innerHTML = data.operations.map(o => `
+  document.getElementById("upcomingList").innerHTML = (data.scheduledOperations || [])
+    .slice()
+    .sort((a,b) => String(a.dueDate).localeCompare(String(b.dueDate)))
+    .map(o => `
+      <div class="row">
+        <div>
+          <div>${o.desc}</div>
+          <div class="small">${o.category} • retrait prévu le ${formatDateFR(o.dueDate)}</div>
+        </div>
+        <div class="amount bad">${euro(o.montant)}</div>
+      </div>
+    `).join("") || `<div class="small">Aucune dépense différée.</div>`;
+
+  document.getElementById("opsList").innerHTML = ops.map(o => `
     <div class="row">
       <div>
         <div>${o.desc}</div>
-        <div class="small">${o.type} • ${o.category}</div>
+        <div class="small">${o.type} • ${o.category}${o.fromDeferred ? ' • depuis différé' : ''}</div>
       </div>
-      <div>
-        <div class="amount ${o.type==='Revenu'?'good':'bad'}">${euro(o.montant)}</div>
-        <button class="btn btn-danger" style="margin-top:8px" onclick="deleteOp(${o.id})">Supprimer</button>
-      </div>
+      <div class="amount ${o.type==='Revenu'?'good':'bad'}">${euro(o.montant)}</div>
     </div>
   `).join("") || `<div class="small">Aucune opération.</div>`;
 }
@@ -1043,6 +1063,7 @@ function renderSummary(){
 function newMonth(){
   if(confirm("Démarrer un nouveau mois ? Les opérations seront supprimées.")){
     data.operations = [];
+  // les dépenses différées sont conservées volontairement
     saveData();
   }
 }
