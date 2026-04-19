@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.9.3</title>
+<title>YoNo Budget V6.9.4</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -978,6 +978,11 @@ function deleteOp(id){
   data.operations = data.operations.filter(o => o.id !== id);
   saveData();
 }
+function deleteScheduled(id){
+  if(!confirm("Supprimer cette dépense différée ?")) return;
+  data.scheduledOperations = (data.scheduledOperations || []).filter(o => o.id !== id);
+  saveData();
+}
 
 function renderHome(){
   const t = totals();
@@ -1083,7 +1088,10 @@ function renderSummary(){
           <div>${o.desc}</div>
           <div class="small">${o.category} • retrait prévu le ${formatDateFR(o.dueDate)}</div>
         </div>
-        <div class="amount bad">${euro(o.montant)}</div>
+        <div>
+          <div class="amount bad">${euro(o.montant)}</div>
+          <button class="btn btn-danger" style="margin-top:8px" onclick="deleteScheduled(${o.id})">Supprimer</button>
+        </div>
       </div>
     `).join("") || `<div class="small">Aucune dépense différée.</div>`;
 
