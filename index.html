@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V6.9.2</title>
+<title>YoNo Budget V6.9.3</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -848,6 +848,8 @@ function saveEntry(){
   const desc = (document.getElementById("addDesc").value || "").trim();
   const amount = parseFloat(String(document.getElementById("addAmount").value || "").replace(",", "."));
   const type = document.getElementById("addType").value;
+  const timing = document.getElementById("addTiming") ? document.getElementById("addTiming").value : "immediate";
+  const deferredDate = document.getElementById("addDeferredDate") ? document.getElementById("addDeferredDate").value : "";
   const selectedCategory = document.getElementById("addCategory").value;
   const newCategory = (document.getElementById("newCategoryInput").value || "").trim();
 
@@ -864,14 +866,56 @@ function saveEntry(){
     return;
   }
 
+  if(type === "Dépense" && timing === "deferred"){
+    if(!deferredDate){
+      alert("Choisis une date prévue de retrait.");
+      return;
+    }
+
+    if(!Array.isArray(data.scheduledOperations)){
+      data.scheduledOperations = [];
+    }
+
+    data.scheduledOperations.unshift({
+      id: Date.now() + Math.random(),
+      desc,
+      montant: amount,
+      type: "Dépense",
+      category,
+      dueDate: deferredDate,
+      createdAt: todayStr()
+    });
+
+    document.getElementById("addDesc").value = "";
+    document.getElementById("addAmount").value = "";
+    document.getElementById("newCategoryInput").value = "";
+    document.getElementById("addCategory").selectedIndex = 0;
+    document.getElementById("addType").value = "Dépense";
+    if(document.getElementById("addTiming")) document.getElementById("addTiming").value = "immediate";
+    if(document.getElementById("addDeferredDate")) document.getElementById("addDeferredDate").value = "";
+    toggleDeferredFields();
+
+    saveData();
+    alert("Dépense différée enregistrée");
+    return;
+  }
+
   data.operations.unshift({
     id: Date.now() + Math.random(),
-    desc, montant: amount, type, category
+    desc,
+    montant: amount,
+    type,
+    category
   });
 
   document.getElementById("addDesc").value = "";
   document.getElementById("addAmount").value = "";
   document.getElementById("newCategoryInput").value = "";
+  document.getElementById("addCategory").selectedIndex = 0;
+  document.getElementById("addType").value = "Dépense";
+  if(document.getElementById("addTiming")) document.getElementById("addTiming").value = "immediate";
+  if(document.getElementById("addDeferredDate")) document.getElementById("addDeferredDate").value = "";
+  toggleDeferredFields();
   saveData();
 }
 
@@ -1003,36 +1047,30 @@ function renderView(){
 }
 
 function renderSummary(){
-  const salaire = Number(data.salary||0);
-  const epargne = salaire * (Number(data.pctEpargne||0)/100);
-  const secu = salaire * (Number(data.pctSecu||0)/100);
-  const budgetMois = salaire - epargne - secu;
-
-  const ops = Array.isArray(data.operations) ? data.operations : [];
-  const depenses = ops.filter(o => o.type === "Dépense").reduce((s,o)=>s+Number(o.montant||0),0);
-  const revenus = ops.filter(o => o.type === "Revenu").reduce((s,o)=>s+Number(o.montant||0),0);
-  const fixes = ops.filter(o => o.category === "Fixes" || o.category === "Abonnements").reduce((s,o)=>s+Number(o.montant||0),0);
-  const variables = depenses - fixes;
-  const reste = budgetMois - depenses + revenus;
-  const pctVie = budgetMois > 0 ? Math.round((reste / budgetMois) * 100) : 0;
-
-  document.getElementById("sumSalaire").textContent = euro(salaire);
-  document.getElementById("sumEpargne").textContent = euro(epargne);
-  document.getElementById("sumSecu").textContent = euro(secu);
-  document.getElementById("sumBudget").textContent = euro(budgetMois);
-  document.getElementById("sumPctVie").textContent = `${pctVie} %`;
+  const t = totals();
+  document.getElementById("inputSalaire").value = t.salaire;
+  document.getElementById("inputPctEpargne").value = t.pctEpargne;
+  document.getElementById("inputPctSecu").value = t.pctSecu;
+  document.getElementById("inputPctVie").value = t.pctVie;
+  document.getElementById("pctInfo").textContent = "La vie quotidienne est calculée automatiquement : 100% - épargne - sécurité.";
+  document.getElementById("sumSalaire").textContent = euro(t.salaire);
+  document.getElementById("sumEpargne").textContent = euro(t.epargne);
+  document.getElementById("sumSecu").textContent = euro(t.secu);
+  document.getElementById("sumBudget").textContent = euro(t.budget);
+  document.getElementById("sumPctVie").textContent = t.pctVie + " %";
 
   const byCat = {};
-  ops.forEach(o => {
-    const key = o.category || "Divers";
-    const sign = o.type === "Revenu" ? 1 : -1;
-    byCat[key] = (byCat[key] || 0) + sign * Number(o.montant || 0);
+  data.fixes.forEach(f => {
+    byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant || 0);
+  });
+  data.operations.forEach(o => {
+    byCat[o.category] = (byCat[o.category] || 0) + (o.type === "Revenu" ? Number(o.montant || 0) : -Number(o.montant || 0));
   });
 
-  document.getElementById("catList").innerHTML = Object.keys(byCat).map(k => `
+  document.getElementById("catSummary").innerHTML = Object.keys(byCat).sort().map(cat => `
     <div class="row">
-      <div>${k}</div>
-      <div class="amount ${byCat[k] >= 0 ? 'good' : 'bad'}">${byCat[k] >= 0 ? '' : '-'}${euro(Math.abs(byCat[k]))}</div>
+      <div>${cat}</div>
+      <div class="amount ${byCat[cat] >= 0 ? 'good' : 'bad'}">${euro(byCat[cat])}</div>
     </div>
   `).join("") || `<div class="small">Aucune donnée.</div>`;
 
@@ -1049,21 +1087,23 @@ function renderSummary(){
       </div>
     `).join("") || `<div class="small">Aucune dépense différée.</div>`;
 
-  document.getElementById("opsList").innerHTML = ops.map(o => `
+  document.getElementById("opsList").innerHTML = data.operations.map(o => `
     <div class="row">
       <div>
         <div>${o.desc}</div>
         <div class="small">${o.type} • ${o.category}${o.fromDeferred ? ' • depuis différé' : ''}</div>
       </div>
-      <div class="amount ${o.type==='Revenu'?'good':'bad'}">${euro(o.montant)}</div>
+      <div>
+        <div class="amount ${o.type==='Revenu'?'good':'bad'}">${euro(o.montant)}</div>
+        <button class="btn btn-danger" style="margin-top:8px" onclick="deleteOp(${o.id})">Supprimer</button>
+      </div>
     </div>
   `).join("") || `<div class="small">Aucune opération.</div>`;
 }
 
 function newMonth(){
-  if(confirm("Démarrer un nouveau mois ? Les opérations seront supprimées.")){
+  if(confirm("Démarrer un nouveau mois ? Les opérations du mois seront supprimées. Les dépenses différées seront conservées.")){
     data.operations = [];
-  // les dépenses différées sont conservées volontairement
     saveData();
   }
 }
@@ -1150,6 +1190,7 @@ function importBackup(event){
           ...imported,
           fixes: Array.isArray(imported.fixes) ? imported.fixes : [],
           operations: Array.isArray(imported.operations) ? imported.operations : [],
+          scheduledOperations: Array.isArray(imported.scheduledOperations) ? imported.scheduledOperations : [],
           scheduledOperations: Array.isArray(imported.scheduledOperations) ? imported.scheduledOperations : [],
           categories: Array.isArray(imported.categories) && imported.categories.length ? imported.categories : base.categories
         };
