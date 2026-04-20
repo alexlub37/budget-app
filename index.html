@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.2.3</title>
+<title>YoNo Budget V7.2.4</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -685,6 +685,31 @@ body{
 .section.slide-in-left{transform:translateX(-20%); opacity:0;}
 .section.active{transform:translateX(0); opacity:1;}
 
+
+/* BETA badge near logo */
+.header-logo-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+.header-beta-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#f59e0b;
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.02em;
+  box-shadow:0 4px 10px rgba(245,158,11,.25);
+}
+@media (max-width:390px){
+  .header-beta-badge{font-size:9px;padding:3px 6px}
+}
+
 </style>
 </head>
 <body>
@@ -700,7 +725,7 @@ body{
 
 
 <div id="home" class="section active">
-  <div class="page-header"><h2><span class="header-chip chip-home"><span class="emoji">🏡</span><span>Accueil</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-home"><span class="emoji">🏡</span><span>Accueil</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><span class="header-beta-badge">BETA</span></div></div>
 
   <div class="card sticky-balance" style="text-align:center;">
     <div class="small" style="text-align:center;">Budget restant</div>
@@ -731,7 +756,7 @@ body{
 </div>
 
 <div id="add" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-add"><span class="emoji">💸</span><span>Ajouter</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-add"><span class="emoji">💸</span><span>Ajouter</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><span class="header-beta-badge">BETA</span></div></div>
   <div class="card">
     <div class="field">
       <label>Description</label>
@@ -773,7 +798,7 @@ body{
 </div>
 
 <div id="fixed" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-fixed"><span class="emoji">🧾</span><span>Fixes</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-fixed"><span class="emoji">🧾</span><span>Fixes</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><span class="header-beta-badge">BETA</span></div></div>
   <div class="card">
     <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalFixed">0 €</div></div>
     <div class="field">
@@ -799,7 +824,7 @@ body{
 </div>
 
 <div id="view" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-view"><span class="emoji">🔍</span><span>Vue</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-view"><span class="emoji">🔍</span><span>Vue</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><span class="header-beta-badge">BETA</span></div></div>
   <div class="card">
     <div class="row"><div>Total fixes mensuels</div><div class="amount bad" id="fixesTotalView">0 €</div></div>
     <div id="fixesViewList"></div>
@@ -807,7 +832,7 @@ body{
 </div>
 
 <div id="summary" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-summary" id="summaryGuideTrigger"><span class="emoji">📈</span><span>Résumé</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-summary" id="summaryGuideTrigger"><span class="emoji">📈</span><span>Résumé</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><span class="header-beta-badge">BETA</span></div></div>
   <div class="card">
     <div class="field">
       <label>Revenu fixe (€)</label>
@@ -879,7 +904,7 @@ body{
 
 
 <div id="backup" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">⚙️</span><span>Réglages</span></span></h2><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"></div>
+  <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">⚙️</span><span>Réglages</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><span class="header-beta-badge">BETA</span></div></div>
 
   <div class="card">
     <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
@@ -1586,11 +1611,11 @@ if (palette) {
     <div class="info-box">
       <div class="info-row">
         <div class="small">Version</div>
-        <div class="small" style="font-weight:800;">V7.2.3</div>
+        <div class="small" style="font-weight:800;">V7.2.4</div>
       </div>
       <div class="info-row">
         <div class="small">Base</div>
-        <div class="small" style="font-weight:800;">V7.2.0</div>
+        <div class="small" style="font-weight:800;">V7.2.3</div>
       </div>
       <div class="info-row">
         <div class="small">Statut</div>
@@ -1611,8 +1636,8 @@ if (palette) {
         Détail de la mise à jour
       </div>
       <div class="small">• Conseil résumé selon salaire et fixes</div>
-      <div class="small">• Prise en compte du poids des fixes</div>
-      <div class="small">• Recommandation indicative à adapter librement</div>
+      <div class="small">• Navigation par swipe entre les onglets</div>
+      <div class="small">• Swipe plus fluide</div>
     </div>
 
     <div class="small" style="margin-top:12px;">Créé par Alexandre</div>
@@ -1906,18 +1931,6 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     tracking=false;
   },{passive:true});
-})();
-</script>
-
-
-<script>
-(function(){
-  if(!localStorage.getItem('yono_test_popup')){
-    setTimeout(function(){
-      alert("Version test\n\nCertaines fonctionnalités peuvent évoluer. Merci pour ton retour 👍");
-      localStorage.setItem('yono_test_popup','1');
-    }, 800);
-  }
 })();
 </script>
 
