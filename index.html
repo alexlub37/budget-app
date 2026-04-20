@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.2.6</title>
+<title>YoNo Budget V7.2.7</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -1034,11 +1034,17 @@ function totals(){
   return {fixes, variables, revenus, budget, reste, salaire, epargne, secu, pctEpargne, pctSecu, pctVie};
 }
 
-function showTab(tab){
-  data.tab = tab;
-  saveData();
-}
 
+<script>
+function showTab(tab){
+  document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+  const target = document.getElementById(tab);
+  if(target){ target.style.display='block'; }
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  showTab('home');
+});
+</script>
 let quickType = "Dépense";
 
 function openQuickModal(label, category, type){
@@ -1616,7 +1622,7 @@ if (palette) {
       </div>
       <div class="info-row">
         <div class="small">Base</div>
-        <div class="small" style="font-weight:800;">V7.2.5</div>
+        <div class="small" style="font-weight:800;">V7.2.6</div>
       </div>
       <div class="info-row">
         <div class="small">Statut</div>
@@ -1638,7 +1644,7 @@ if (palette) {
       </div>
       <div class="small">• Navigation par swipe entre les onglets</div>
       <div class="small">• Badge BETA cliquable pour donner un avis</div>
-      <div class="small">• Carte guide ajoutée dans Réglages</div>
+      <div class="small">• Correction onglet Réglages + carte guide</div>
     </div>
 
     <div class="small" style="margin-top:12px;">Créé par Alexandre</div>
