@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.2.2</title>
+<title>YoNo Budget V7.2.3</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -562,7 +562,7 @@ body{
 
 
 
-/* Guide répartition salaire + fixes V7.2.1 */
+/* Guide répartition salaire + fixes V7.2.3 */
 #summaryGuideTrigger{cursor:pointer}
 #summaryGuideModal{
   display:none;
@@ -677,10 +677,13 @@ body{
 }
 
 
-/* Swipe navigation */
-body.swiping-x{
-  user-select:none;
+/* Smooth swipe animation */
+.section{
+  transition: transform .25s ease, opacity .25s ease;
 }
+.section.slide-in-right{transform:translateX(20%); opacity:0;}
+.section.slide-in-left{transform:translateX(-20%); opacity:0;}
+.section.active{transform:translateX(0); opacity:1;}
 
 </style>
 </head>
@@ -1583,11 +1586,11 @@ if (palette) {
     <div class="info-box">
       <div class="info-row">
         <div class="small">Version</div>
-        <div class="small" style="font-weight:800;">V7.2.2</div>
+        <div class="small" style="font-weight:800;">V7.2.3</div>
       </div>
       <div class="info-row">
         <div class="small">Base</div>
-        <div class="small" style="font-weight:800;">V7.2.1</div>
+        <div class="small" style="font-weight:800;">V7.2.0</div>
       </div>
       <div class="info-row">
         <div class="small">Statut</div>
@@ -1608,7 +1611,7 @@ if (palette) {
         Détail de la mise à jour
       </div>
       <div class="small">• Conseil résumé selon salaire et fixes</div>
-      <div class="small">• Navigation par swipe entre les onglets</div>
+      <div class="small">• Prise en compte du poids des fixes</div>
       <div class="small">• Recommandation indicative à adapter librement</div>
     </div>
 
@@ -1844,83 +1847,65 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 (function(){
-  var tabs = ['home','add','fixed','view','summary','backup'];
-  var startX = 0, startY = 0;
-  var tracking = false, activeTouchId = null, lockedX = false;
-  var thresholdX = 70, thresholdY = 35;
+  const tabs = ['home','add','fixed','view','summary','backup'];
+  let startX=0,startY=0,tracking=false,id=null;
 
   function currentTab(){
-    if (typeof data !== 'undefined' && data && data.tab) return data.tab;
-    var active = document.querySelector('.section.active');
-    return active ? active.id : 'home';
+    if(window.data && data.tab) return data.tab;
+    const el=document.querySelector('.section.active');
+    return el?el.id:'home';
   }
 
-  function goRelative(dir){
-    var cur = currentTab();
-    var idx = tabs.indexOf(cur);
-    if(idx < 0) idx = 0;
-    var next = idx + dir;
-    if(next < 0 || next >= tabs.length) return;
-    if(typeof showTab === 'function') showTab(tabs[next]);
+  function animateSwitch(nextId,dir){
+    const current=document.querySelector('.section.active');
+    const next=document.getElementById(nextId);
+    if(!current||!next||current===next) return;
+
+    next.classList.add('active');
+    next.classList.add(dir==='left'?'slide-in-right':'slide-in-left');
+
+    requestAnimationFrame(()=>{
+      next.classList.remove('slide-in-right','slide-in-left');
+    });
+
+    setTimeout(()=>{
+      current.classList.remove('active');
+    },200);
   }
 
-  function isInteractive(el){
-    if(!el) return false;
-    return !!el.closest('input, textarea, select, button, a, .quick-sheet, #summaryGuideModal .guide-card, #appInfoModal .info-card');
-  }
-
-  document.addEventListener('touchstart', function(e){
-    if(!e.touches || e.touches.length !== 1) return;
-    var t = e.touches[0];
-    if(isInteractive(e.target)) return;
-    tracking = true;
-    lockedX = false;
-    activeTouchId = t.identifier;
-    startX = t.clientX;
-    startY = t.clientY;
-  }, {passive:true});
-
-  document.addEventListener('touchmove', function(e){
-    if(!tracking || !e.changedTouches) return;
-    for(var i=0;i<e.changedTouches.length;i++){
-      var t = e.changedTouches[i];
-      if(t.identifier !== activeTouchId) continue;
-      var dx = t.clientX - startX;
-      var dy = t.clientY - startY;
-      if(Math.abs(dx) > thresholdY && Math.abs(dx) > Math.abs(dy)){
-        lockedX = true;
-        document.body.classList.add('swiping-x');
-      }
-      break;
-    }
-  }, {passive:true});
-
-  function finishTouch(e){
-    if(!tracking || !e.changedTouches) return;
-    for(var i=0;i<e.changedTouches.length;i++){
-      var t = e.changedTouches[i];
-      if(t.identifier !== activeTouchId) continue;
-      var dx = t.clientX - startX;
-      var dy = t.clientY - startY;
-      if(lockedX && Math.abs(dx) >= thresholdX && Math.abs(dy) <= Math.abs(dx)){
-        if(dx < 0){ goRelative(1); }
-        else { goRelative(-1); }
-      }
-      tracking = false;
-      lockedX = false;
-      activeTouchId = null;
-      document.body.classList.remove('swiping-x');
-      break;
+  function go(dir){
+    let cur=currentTab();
+    let i=tabs.indexOf(cur);
+    if(i<0) i=0;
+    let n=i+(dir==='left'?1:-1);
+    if(n<0||n>=tabs.length) return;
+    if(typeof showTab==='function'){
+      animateSwitch(tabs[n],dir);
+      showTab(tabs[n]);
     }
   }
 
-  document.addEventListener('touchend', finishTouch, {passive:true});
-  document.addEventListener('touchcancel', function(){
-    tracking = false;
-    lockedX = false;
-    activeTouchId = null;
-    document.body.classList.remove('swiping-x');
-  }, {passive:true});
+  document.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1) return;
+    let t=e.touches[0];
+    startX=t.clientX; startY=t.clientY;
+    tracking=true; id=t.identifier;
+  },{passive:true});
+
+  document.addEventListener('touchend',e=>{
+    if(!tracking) return;
+    let t=[...e.changedTouches].find(x=>x.identifier===id);
+    if(!t) return;
+
+    let dx=t.clientX-startX;
+    let dy=t.clientY-startY;
+
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)){
+      if(dx<0) go('left');
+      else go('right');
+    }
+    tracking=false;
+  },{passive:true});
 })();
 </script>
 
