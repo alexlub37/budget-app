@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.2.8</title>
+<title>YoNo Budget V7.2.9</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -1392,7 +1392,7 @@ function renderSummary(){
   data.fixes.forEach(f => {
     byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant || 0);
   });
-  data.operations.forEach(o => {
+  ([...data.operations].sort((a,b)=>b.amount-a.amount)).forEach(o => {
     byCat[o.category] = (byCat[o.category] || 0) + (o.type === "Revenu" ? Number(o.montant || 0) : -Number(o.montant || 0));
   });
 
