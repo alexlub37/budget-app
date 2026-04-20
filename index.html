@@ -1364,7 +1364,9 @@ function renderFixed(){
 function renderView(){
   const t = totals();
   document.getElementById("fixesTotalView").textContent = euro(t.fixes);
-  document.getElementById("fixesViewList").innerHTML = data.fixes.map(f => `
+  document.getElementById("fixesViewList").innerHTML = [...data.fixes]
+    .sort((a,b) => Number(b.montant||0) - Number(a.montant||0))
+    .map(f => `
     <div class="row">
       <div>
         <div>${f.desc}</div>
@@ -1392,7 +1394,7 @@ function renderSummary(){
   data.fixes.forEach(f => {
     byCat[f.type] = (byCat[f.type] || 0) - Number(f.montant || 0);
   });
-  ([...data.operations].sort((a,b)=>b.amount-a.amount)).forEach(o => {
+  data.operations.forEach(o => {
     byCat[o.category] = (byCat[o.category] || 0) + (o.type === "Revenu" ? Number(o.montant || 0) : -Number(o.montant || 0));
   });
 
@@ -1667,11 +1669,11 @@ if (palette) {
     <div class="info-box">
       <div class="info-row">
         <div class="small">Version</div>
-        <div class="small" style="font-weight:800;">V7.2.8</div>
+        <div class="small" style="font-weight:800;">V7.2.9</div>
       </div>
       <div class="info-row">
         <div class="small">Base</div>
-        <div class="small" style="font-weight:800;">V7.2.5</div>
+        <div class="small" style="font-weight:800;">V7.2.8</div>
       </div>
       <div class="info-row">
         <div class="small">Statut</div>
@@ -1691,9 +1693,9 @@ if (palette) {
       <div class="small" style="font-weight:800;color:#0f172a;margin-bottom:8px;">
         Détail de la mise à jour
       </div>
-      <div class="small">• Navigation par swipe entre les onglets</div>
       <div class="small">• Badge BETA cliquable pour donner un avis</div>
       <div class="small">• Popup Réglages ajoutée sur le titre</div>
+      <div class="small">• Tri du plus grand au plus petit dans Vue</div>
     </div>
 
     <div class="small" style="margin-top:12px;">Créé par Alexandre</div>
@@ -2000,8 +2002,8 @@ window.YONO_BADGE_MODE = 'beta'; // plus tard : 'aide'
   var mode = (window.YONO_BADGE_MODE || 'beta').toLowerCase();
   var label = mode === 'aide' ? 'AIDE' : 'BETA';
   var subject = mode === 'aide'
-    ? 'Support YoNo Budget V7.2.8'
-    : 'Retour YoNo Budget V7.2.8';
+    ? 'Support YoNo Budget V7.2.9'
+    : 'Retour YoNo Budget V7.2.9';
   var body = mode === 'aide'
     ? "Bonjour,%0A%0AJ'ai besoin d'aide concernant YoNo Budget :%0A%0A- Sujet :%0A- Détail :%0A%0A"
     : "Bonjour,%0A%0AJe te fais un retour sur l'application YoNo Budget :%0A%0A- Points positifs :%0A- Améliorations :%0A- Bugs éventuels :%0A%0A";
