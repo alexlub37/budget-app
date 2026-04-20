@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>YoNo Budget V7.2.7</title>
+<title>YoNo Budget V7.2.8</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -711,6 +711,61 @@ body{
   .header-beta-badge{font-size:9px;padding:3px 6px}
 }
 
+
+/* Popup Réglages */
+#settingsGuideTrigger{cursor:pointer}
+#settingsGuideModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  z-index:10002;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+#settingsGuideModal .settings-card{
+  width:100%;
+  max-width:390px;
+  max-height:86vh;
+  overflow:auto;
+  background:rgba(255,255,255,.98);
+  backdrop-filter:blur(8px);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 18px 45px rgba(15,23,42,.18);
+  border:1px solid rgba(255,255,255,.85);
+}
+#settingsGuideModal .settings-title{
+  margin:0 0 10px 0;
+  font-size:28px;
+  letter-spacing:-0.03em;
+}
+#settingsGuideModal .settings-intro{
+  font-size:14px;
+  color:#64748b;
+  margin-bottom:12px;
+  line-height:1.42;
+}
+#settingsGuideModal .settings-box{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:10px;
+}
+#settingsGuideModal .settings-box-title{
+  font-weight:800;
+  font-size:16px;
+  margin-bottom:6px;
+  color:#0f172a;
+}
+#settingsGuideModal .settings-box-text{
+  color:#64748b;
+  font-size:14px;
+  line-height:1.45;
+}
+
 </style>
 </head>
 <body>
@@ -905,16 +960,7 @@ body{
 
 
 <div id="backup" class="section">
-  <div class="page-header"><h2><span class="header-chip chip-backup"><span class="emoji">⚙️</span><span>Réglages</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><a id="headerBetaLink" href="mailto:a.lubineau@orange.fr?subject=Retour%20YoNo%20Budget%20V7.2.5&body=Bonjour,%0A%0AJe%20te%20fais%20un%20retour%20sur%20l%27application%20YoNo%20Budget%20:%0A%0A-%20Points%20positifs%20:%0A-%20Am%C3%A9liorations%20:%0A-%20Bugs%20%C3%A9ventuels%20:%0A%0A" style="text-decoration:none;"><span class="header-beta-badge" id="headerBetaBadge">BETA</span></a></div>
-
-  <div class="card">
-    <div class="small" style="font-weight:800;color:#0f172a;margin-bottom:10px;font-size:16px;">🧭 Guide rapide</div>
-    <div class="small" style="margin-bottom:12px">Pense à faire une sauvegarde avant chaque mise à jour.</div>
-    <div class="small" style="margin-bottom:8px"><strong style="color:#0f172a">Fixes :</strong> à remplir dès le début</div>
-    <div class="small" style="margin-bottom:8px"><strong style="color:#0f172a">Sauvegarde Fixes :</strong> évite de tout retaper après une mise à jour</div>
-    <div class="small" style="margin-bottom:8px"><strong style="color:#0f172a">Sauvegarde mois :</strong> garde ton mois et tes données</div>
-    <div class="small"><strong style="color:#0f172a">Restaurer :</strong> récupère tes données après une mise à jour</div>
-  </div></div>
+  <div class="page-header"><h2><span class="header-chip chip-backup" id="settingsGuideTrigger"><span class="emoji">⚙️</span><span>Réglages</span></span></h2><div class="header-logo-wrap"><img class="header-logo" src="logo-yono-budget.png" alt="YoNo"><a id="headerBetaLink" href="mailto:a.lubineau@orange.fr?subject=Retour%20YoNo%20Budget%20V7.2.5&body=Bonjour,%0A%0AJe%20te%20fais%20un%20retour%20sur%20l%27application%20YoNo%20Budget%20:%0A%0A-%20Points%20positifs%20:%0A-%20Am%C3%A9liorations%20:%0A-%20Bugs%20%C3%A9ventuels%20:%0A%0A" style="text-decoration:none;"><span class="header-beta-badge" id="headerBetaBadge">BETA</span></a></div></div>
 
   <div class="card">
     <div class="small" style="margin-bottom:8px">Sauvegarde de base</div>
@@ -1621,7 +1667,7 @@ if (palette) {
     <div class="info-box">
       <div class="info-row">
         <div class="small">Version</div>
-        <div class="small" style="font-weight:800;">V7.2.7</div>
+        <div class="small" style="font-weight:800;">V7.2.8</div>
       </div>
       <div class="info-row">
         <div class="small">Base</div>
@@ -1647,7 +1693,7 @@ if (palette) {
       </div>
       <div class="small">• Navigation par swipe entre les onglets</div>
       <div class="small">• Badge BETA cliquable pour donner un avis</div>
-      <div class="small">• Carte guide ajoutée dans Réglages</div>
+      <div class="small">• Popup Réglages ajoutée sur le titre</div>
     </div>
 
     <div class="small" style="margin-top:12px;">Créé par Alexandre</div>
@@ -1954,8 +2000,8 @@ window.YONO_BADGE_MODE = 'beta'; // plus tard : 'aide'
   var mode = (window.YONO_BADGE_MODE || 'beta').toLowerCase();
   var label = mode === 'aide' ? 'AIDE' : 'BETA';
   var subject = mode === 'aide'
-    ? 'Support YoNo Budget V7.2.7'
-    : 'Retour YoNo Budget V7.2.7';
+    ? 'Support YoNo Budget V7.2.8'
+    : 'Retour YoNo Budget V7.2.8';
   var body = mode === 'aide'
     ? "Bonjour,%0A%0AJ'ai besoin d'aide concernant YoNo Budget :%0A%0A- Sujet :%0A- Détail :%0A%0A"
     : "Bonjour,%0A%0AJe te fais un retour sur l'application YoNo Budget :%0A%0A- Points positifs :%0A- Améliorations :%0A- Bugs éventuels :%0A%0A";
@@ -1965,6 +2011,64 @@ window.YONO_BADGE_MODE = 'beta'; // plus tard : 'aide'
     link.setAttribute('href', 'mailto:a.lubineau@orange.fr?subject=' + encodeURIComponent(subject) + '&body=' + body);
   });
 })();
+</script>
+
+
+<div id="settingsGuideModal">
+  <div class="settings-card">
+    <div class="settings-title">Guide Réglages</div>
+    <div class="settings-intro">
+      Ce guide t’explique à quoi servent les sauvegardes et la restauration.
+      Il aide à éviter de tout retaper après une mise à jour.
+    </div>
+
+    <div class="settings-box">
+      <div class="settings-box-title">📦 Fixes</div>
+      <div class="settings-box-text">À remplir dès le début pour calculer correctement ton budget réel.</div>
+    </div>
+
+    <div class="settings-box">
+      <div class="settings-box-title">💾 Sauvegarde Fixes</div>
+      <div class="settings-box-text">Enregistre tes charges fixes pour éviter de tout ressaisir après une mise à jour.</div>
+    </div>
+
+    <div class="settings-box">
+      <div class="settings-box-title">🗓 Sauvegarde du mois</div>
+      <div class="settings-box-text">Garde ton mois en cours et toutes les données déjà saisies pour repartir avec la nouvelle version sans rien retaper.</div>
+    </div>
+
+    <div class="settings-box">
+      <div class="settings-box-title">🔄 Restaurer</div>
+      <div class="settings-box-text">Recharge une sauvegarde Fixes ou une sauvegarde du mois après une mise à jour ou une erreur.</div>
+    </div>
+
+    <div class="small" style="margin-top:6px;">Pense à faire une sauvegarde avant chaque mise à jour.</div>
+
+    <button class="btn btn-primary" style="margin-top:14px" onclick="closeSettingsGuide()">Fermer</button>
+  </div>
+</div>
+
+<script>
+function openSettingsGuide(){
+  var modal = document.getElementById('settingsGuideModal');
+  if(modal){ modal.style.display = 'flex'; }
+}
+function closeSettingsGuide(){
+  var modal = document.getElementById('settingsGuideModal');
+  if(modal){ modal.style.display = 'none'; }
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var trigger = document.getElementById('settingsGuideTrigger');
+  if(trigger){
+    trigger.addEventListener('click', openSettingsGuide);
+  }
+  var modal = document.getElementById('settingsGuideModal');
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === modal){ closeSettingsGuide(); }
+    });
+  }
+});
 </script>
 
 </body>
